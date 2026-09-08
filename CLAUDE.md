@@ -33,7 +33,12 @@ important than visual novelty or technical sophistication.
      later. The site must run as plain static files.
    - Do **not** introduce a database, server-side language (PHP/Node/Python
      backend, etc.), authentication/login system, or CMS (WordPress, etc.)
-     at this stage.
+     at this stage. **One deliberate, narrow exception:** `counter.php` at
+     the project root, added for the global visit counter — see "Site-wide
+     visit counter" below. It's a single small file with no framework, no
+     database, and no login; everything else on the site stays static.
+     Don't add further server-side code without the same explicit
+     discussion.
    - Do **not** add a contact form with server-side processing without
      checking with the user first — static hosting has no backend. A
      `mailto:` link or a third-party form service are the only options to
@@ -41,7 +46,10 @@ important than visual novelty or technical sophistication.
 4. **Deployable on conventional/ERNET institutional hosting.** Assume plain
    Apache-style static hosting with no guarantee of Node/PHP/database
    availability, no build pipeline, and possibly restricted or filtered
-   outbound network access.
+   outbound network access. **Exception:** the site-wide visit counter
+   (`counter.php`) does require a host with PHP enabled and a writable
+   `data/` directory — see "Site-wide visit counter" below for exactly what
+   happens if that's not available. Nothing else on the site depends on PHP.
    - Self-host every asset (CSS, JS, fonts, images). Do not depend on
      external CDNs (Google Fonts, CDN-hosted JS libraries, etc.), analytics,
      or tracking scripts.
@@ -57,19 +65,29 @@ important than visual novelty or technical sophistication.
 
 ## Path & link conventions
 
-The site now has section folders one level deep (`about/`, `academics/`,
-`admissions/`, `students/`, `facilities/`), so path handling must work
-correctly both when a page is opened directly (`file://…`, for a quick local
-preview with no server) and when deployed for real at the domain root.
+The site has section folders one level deep (`about/`, `academics/`,
+`admissions/`, `students/`, `facilities/`) and, under `academics/`, one
+folder that goes a level deeper still (`academics/departments/*.html`), so
+path handling must work correctly both when a page is opened directly
+(`file://…`, for a quick local preview with no server) and when deployed for
+real at the domain root.
 
 - **Static asset references (CSS, JS, images) and internal page links use
   document-relative paths**, not root-relative (`/…`) paths:
   - From a root-level page (`index.html`, `gallery.html`, `contact.html`,
     `training-placement.html`): `css/style.css`, `js/main.js`,
     `images/...`, `about/about-college.html`, etc.
-  - From a page one folder deep (e.g. `about/vision-mission.html`):
-    `../css/style.css`, `../js/main.js`, `../images/...`,
-    `../academics/departments.html`, etc.
+  - From a page one folder deep (e.g. `about/vision-mission.html`,
+    `academics/departments.html`): `../css/style.css`, `../js/main.js`,
+    `../images/...`, `../academics/departments.html`, etc.
+  - From a page **two** folders deep (`academics/departments/*.html` —
+    currently the only such pages on the site): `../../css/style.css`,
+    `../../js/main.js`, `../../images/...`, `../../about/about-college.html`,
+    etc. — **except** for its three siblings still inside `academics/`
+    (`departments.html`, `courses.html`, `academic-calendar.html`,
+    `examination.html`), which only need one `../` since they live one
+    level up, not two (e.g. `../departments.html`, not
+    `../../academics/departments.html`).
   - Reason: a root-relative path like `/css/style.css` resolves to the
     filesystem root when a page is opened via `file://`, breaking local
     preview. Document-relative paths work identically under `file://` and
@@ -89,6 +107,52 @@ preview with no server) and when deployed for real at the domain root.
     call gated on domain-root deployment anyway.
 - **Do not mix the two conventions** — asset/link `href`/`src` attributes are
   always document-relative; JSON `fetch()` URLs are always root-relative.
+- **Exception:** page-scoped scripts dedicated to exactly one page (or one
+  fixed depth), rather than shared across every depth like `main.js`, use a
+  plain document-relative `fetch()` instead — there's no "every depth" case
+  to protect against, so the root-relative rule's reasoning doesn't apply.
+  `js/faculty-staff.js` (`about/faculty-staff.html`, one level deep) fetches
+  `../data/staff.json`; `js/department.js` fetches `../data/departments.json`
+  from the one-level-deep landing page (`academics/departments.html`) and
+  `../../data/staff.json` from the two-level-deep department pages
+  (`academics/departments/*.html`) — two different hardcoded paths in the
+  same file, one per function, since each function only ever runs on the
+  page depth it belongs to.
+
+## Site-wide visit counter
+
+There is exactly **one** counter for the whole website — not one per page.
+Every page increments the same shared total on load; the footer on every
+page displays that same number as "Website Visits: 1,234".
+
+**This is the one deliberate exception to the static-only rule above** and
+is the only place PHP is used anywhere on the site:
+
+- `counter.php` (project root) — takes no input from the request at all (no
+  filename, path, or query parameter is ever read), so a client can never
+  influence which file it reads or writes. On each call it opens
+  `data/visit-count.txt` with an exclusive `flock()`, increments the integer
+  it contains, writes it back, and returns `{"count": N}` as JSON. The lock
+  makes concurrent requests safe against corruption.
+- `data/visit-count.txt` is runtime state, not source content — it's listed
+  in `.gitignore` and is not committed. `counter.php` creates it
+  automatically (starting at 0) the first time it's called, so nothing needs
+  to be pre-seeded at deploy time — the `data/` directory just needs to be
+  writable by the web server user.
+- `js/main.js`'s `populateVisitCounter()` calls `fetch("/counter.php")` once
+  per page load — root-relative, for the same reason JSON fetches are (see
+  above): one path works from every page depth. On success it fills in
+  `#visit-count` and reveals the `#visit-counter` line in the footer; on any
+  failure (PHP not available, e.g. a local static preview, or the counter
+  file couldn't be read/written) it simply leaves that line hidden. A broken
+  or unavailable counter never affects anything else on the page.
+
+**Hosting requirement:** this feature needs PHP enabled on the server and a
+writable `data/` directory. If the chosen ERNET hosting doesn't support PHP,
+`counter.php` simply won't execute (or will 404), the fetch above will fail,
+and every page will silently render with no visit-counter line — the rest of
+the site is completely unaffected either way.
+
 5. **Accessibility and standards.** This is a government website — aim for
    WCAG 2.1 AA and general alignment with the Guidelines for Indian
    Government Websites (GIGW): semantic HTML, proper heading structure,
@@ -151,6 +215,9 @@ sitemap as confirmation that the facility/committee exists.
 ```
 /
 ├── CLAUDE.md
+├── counter.php                 Global site-wide visit counter endpoint — see
+│                                "Site-wide visit counter" above. Only
+│                                server-side file on the site.
 ├── index.html                 Homepage
 ├── gallery.html                Photo gallery
 ├── contact.html                Contact details, location, map
@@ -163,7 +230,15 @@ sitemap as confirmation that the facility/committee exists.
 │   ├── organization-chart.html
 │   └── committees.html         (existence unconfirmed)
 ├── academics/
-│   ├── departments.html
+│   ├── departments.html         Landing page — cards link into departments/,
+│   │                            built from data/departments.json by js/department.js
+│   ├── departments/             One page per department — see "Department pages" below
+│   │   ├── automobile-engineering.html
+│   │   ├── civil-engineering.html
+│   │   ├── electrical-engineering.html
+│   │   ├── mechanical-engineering.html
+│   │   ├── plastic-engineering.html
+│   │   └── science-and-humanity.html
 │   ├── courses.html
 │   ├── academic-calendar.html
 │   └── examination.html        Shared page — also linked from Students nav
@@ -188,7 +263,10 @@ sitemap as confirmation that the facility/committee exists.
 ├── css/
 │   └── style.css                Single stylesheet (may be split later if it grows large)
 ├── js/
-│   └── main.js                  Shared vanilla JS (nav toggle, notices/data rendering, etc.)
+│   ├── main.js                  Shared vanilla JS (nav toggle, notices/data rendering, etc.)
+│   ├── faculty-staff.js         about/faculty-staff.html only — see that page's own comment
+│   └── department.js            academics/departments.html + academics/departments/*.html —
+│                                 see "Department pages" below
 ├── images/
 │   ├── logo/                    Official college logo/emblem
 │   ├── banners/                  Homepage/section banner images
@@ -200,7 +278,13 @@ sitemap as confirmation that the facility/committee exists.
 ├── downloads/                      Downloadable forms/templates/syllabi (referenced by students/downloads.html)
 └── data/
     ├── college-info.json           Central facts (address, phone, email, affiliation, etc.)
-    └── notices.json                Structured list of notices, consumed by students/notices.html
+    ├── notices.json                Structured list of notices, consumed by students/notices.html
+    ├── staff.json                  Faculty/staff records — consumed by about/faculty-staff.html
+    │                               (all departments) and js/department.js (one department at a time)
+    ├── departments.json            The 6 departments: staff.json name, display name, page slug —
+    │                               see "Department pages" below
+    └── visit-count.txt             Runtime counter state written by counter.php — not
+                                     committed (see .gitignore), auto-created on first hit
 ```
 
 **Examination is one physical page** (`academics/examination.html`) even
@@ -208,6 +292,56 @@ though it's reachable from both the Academics and Students menus — the
 Students-menu entry is just a link to that same file
 (`../academics/examination.html` from within `students/`), never a
 duplicate page. Keep it this way so there is only ever one copy to maintain.
+
+## Department pages
+
+There are exactly **six** departments, each with **one** page (not a
+separate page per Vision/Mission/PSO/etc.) under `academics/departments/`:
+Automobile Engineering, Civil Engineering, Electrical Engineering,
+Mechanical Engineering, Plastic Engineering, and Science and Humanity.
+Science and Humanity is included as a full department page even though it's
+a common-subject/service department rather than a diploma-granting program —
+don't treat its presence as implying it grants its own diploma.
+
+`academics/departments.html` is the landing page — it lists all six as
+cards (built at runtime from `data/departments.json` by
+`populateDepartmentsIndex()` in `js/department.js`, not hardcoded HTML) and
+is the *only* way to reach the individual pages. **There is no per-department
+entry in the primary navigation** — the Academics dropdown still has exactly
+one "Departments" item, same as the approved sitemap.
+
+**Exact section headings required on every department page** (never prefix
+these with the department's own name, e.g. never "Mechanical Engineering
+Vision"):
+
+- About the Department
+- Department Vision
+- Department Mission
+- Program Outcomes
+- Program Specific Outcomes (PSOs)
+- Faculty & Staff
+- Courses
+- Laboratories / Facilities
+
+**Faculty & Staff is the only section backed by real data right now** —
+`populateDepartmentStaff()` in `js/department.js` reads the department name
+off a `data-department="..."` attribute on that section's container (the
+exact string used in `staff.json`, e.g. `"MECHANICAL ENGINEERING"` — must
+match `data/departments.json`'s `name` field for that department) and
+renders a plain, non-interactive table (no search/filter — the roster is
+already scoped to one department) using the shared `.data-table` /
+`.table-responsive` / `.staff-table` styles from the Faculty & Staff
+directory feature. Each page also links back to the full
+`about/faculty-staff.html` directory.
+
+Every other section (About the Department, Department Vision, Department
+Mission, Program Outcomes, PSOs, Courses, Laboratories / Facilities) is a
+`[PLACEHOLDER: ...]` paragraph per the placeholder convention above — no
+department description, vision, mission, outcomes, courses, labs, intake
+numbers, or achievements have been supplied yet for **any** department,
+Science and Humanity included. When real content is supplied for a section
+on a specific department's page, replace only that placeholder with the
+exact supplied text — never infer or extend it to other departments.
 
 ### Why a `data/` folder for a static site
 
@@ -239,10 +373,8 @@ templating engine, no build step.
 The same pattern applies to `students/downloads.html` / `/downloads/` once
 that page's JS is built.
 
-Per-department subpages (if needed later) can be added under
-`academics/departments/` following the same document-relative path
-convention (see "Path & link conventions") — not created yet since
-department details haven't been provided.
+Per-department subpages now exist under `academics/departments/` — see
+"Department pages" above.
 
 ## Image guidelines (no build pipeline = no automatic optimisation)
 

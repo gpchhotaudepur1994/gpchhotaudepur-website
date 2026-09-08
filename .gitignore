@@ -2,3 +2,6 @@
 Thumbs.db
 desktop.ini
 *.log
+
+# Runtime state written by counter.php — not source content, don't track it.
+data/visit-count.txt

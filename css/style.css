@@ -418,6 +418,38 @@ button { font: inherit; }
 .principal-content { flex: 1; min-width: 240px; }
 .principal-name { font-weight: 700; margin-bottom: var(--space-1); }
 
+/* ---------- Mission / statement lists (Vision & Mission, etc.) ---------- */
+.mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 70ch;
+}
+.mission-list li {
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-accent);
+}
+.mission-list li strong {
+  color: var(--color-primary-dark);
+  margin-right: var(--space-1);
+}
+
+/* ---------- Stacked page sections (department pages, etc.) ---------- */
+/* Extra breathing room between a run of h2 subsections in one .section-inner. */
+.stacked-sections h2 { margin-top: var(--space-7); }
+.stacked-sections h2:first-of-type { margin-top: 0; }
+
+/* Numbered lists (e.g. Program Outcomes) — keep the browser's own numbering,
+   just add consistent spacing to match .mission-list's rhythm. */
+.outcomes-list {
+  margin: 0;
+  padding-left: 1.25em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 70ch;
+}
+
 /* ---------- Gallery preview ---------- */
 .gallery-preview-grid {
   display: grid;
@@ -647,3 +679,5 @@ button { font: inherit; }
   font-size: 0.85rem;
   color: #b8c4d1;
 }
+.footer-bottom p { margin: 0; }
+.footer-bottom p + p { margin-top: var(--space-1); }

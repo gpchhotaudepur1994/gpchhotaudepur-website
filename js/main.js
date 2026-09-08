@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   populateCollegeInfo();
   populateImportantNotice();
   setCopyrightYear();
+  populateVisitCounter();
 });
 
 // ---------- Mobile hamburger menu ----------
@@ -123,6 +124,39 @@ function populateImportantNotice() {
 function setCopyrightYear() {
   var el = document.getElementById("copyright-year");
   if (el) el.textContent = String(new Date().getFullYear());
+}
+
+// ---------- Global site-wide visit counter (counter.php) ----------
+// One counter for the whole site, not one per page: every page load hits the
+// same server-side endpoint, which increments a single shared file and hands
+// back the new total. Root-relative ("/counter.php") for the same reason as
+// the JSON fetches above — one path works from every page depth. counter.php
+// requires PHP-enabled hosting (see CLAUDE.md); if it's unavailable the
+// fetch/parse below simply fails and the element stays hidden, so a missing
+// or broken counter never affects the rest of the page.
+function populateVisitCounter() {
+  var wrapper = document.getElementById("visit-counter");
+  var valueEl = document.getElementById("visit-count");
+  if (!wrapper || !valueEl) return;
+
+  fetch("/counter.php")
+    .then(function (response) {
+      if (!response.ok) throw new Error("Request failed: " + response.status);
+      return response.json();
+    })
+    .then(function (data) {
+      if (typeof data.count !== "number") throw new Error("Unexpected data format");
+      valueEl.textContent = formatWithCommas(data.count);
+      wrapper.hidden = false;
+    })
+    .catch(function () {
+      // No PHP hosting available (e.g. local static preview) or the counter
+      // file couldn't be read/written — leave the line hidden.
+    });
+}
+
+function formatWithCommas(number) {
+  return String(number).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // ---------- Helper ----------

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "AUTOMOBILE ENGINEERING",
+    "displayName": "Automobile Engineering",
+    "slug": "automobile-engineering"
+  },
+  {
+    "name": "CIVIL ENGINEERING",
+    "displayName": "Civil Engineering",
+    "slug": "civil-engineering"
+  },
+  {
+    "name": "ELECTRICAL ENGINEERING",
+    "displayName": "Electrical Engineering",
+    "slug": "electrical-engineering"
+  },
+  {
+    "name": "MECHANICAL ENGINEERING",
+    "displayName": "Mechanical Engineering",
+    "slug": "mechanical-engineering"
+  },
+  {
+    "name": "PLASTIC ENGINEERING",
+    "displayName": "Plastic Engineering",
+    "slug": "plastic-engineering"
+  },
+  {
+    "name": "SCIENCE AND HUMANITY",
+    "displayName": "Science and Humanity",
+    "slug": "science-and-humanity"
+  }
+]
