@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Organization Chart | Government Polytechnic, Chhotaudepur</title>
+  <title>Faculty & Staff | Government Polytechnic, Chhotaudepur</title>
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -48,9 +48,9 @@
               <li><a href="../about/vision-mission.html">Vision &amp; Mission</a></li>
               <li><a href="../about/principals-message.html">Principal's Message</a></li>
               <li><a href="../about/administration.html">Administration</a></li>
-              <li><a href="../about/organization-chart.html" aria-current="page">Organization Chart</a></li>
+              <li><a href="../about/organization-chart.html">Organization Chart</a></li>
               <li><a href="../about/committees.html">Committees</a></li>
-              <li><a href="../about/faculty-staff.html">Faculty &amp; Staff</a></li>
+              <li><a href="../about/faculty-staff.html" aria-current="page">Faculty &amp; Staff</a></li>
             </ul>
           </li>
 
@@ -107,8 +107,39 @@
   <main id="main-content">
     <section class="section" aria-labelledby="page-heading">
       <div class="section-inner">
-        <h1 id="page-heading" class="section-title">Organization Chart</h1>
-        <p>[PLACEHOLDER: Official information pending — to be provided by the institute.]</p>
+        <h1 id="page-heading" class="section-title">Faculty &amp; Staff</h1>
+        <p class="section-lede">Details of faculty and staff of Government Polytechnic, Chhotaudepur.</p>
+
+        <div class="staff-filters">
+          <div class="staff-filter-field">
+            <label for="staff-search">Search by name</label>
+            <input type="search" id="staff-search" name="staff-search" placeholder="Type a name" autocomplete="off">
+          </div>
+          <div class="staff-filter-field">
+            <label for="staff-department-filter">Filter by department</label>
+            <select id="staff-department-filter" name="staff-department-filter">
+              <option value="all">All Departments</option>
+            </select>
+          </div>
+        </div>
+
+        <p id="staff-status" role="status">Loading staff directory&hellip;</p>
+        <p id="staff-count" aria-live="polite"></p>
+
+        <div id="staff-table-wrapper" class="table-responsive" hidden>
+          <table class="data-table">
+            <caption class="sr-only">Faculty and staff of Government Polytechnic, Chhotaudepur, with department, designation and highest qualification</caption>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Department</th>
+                <th scope="col">Designation</th>
+                <th scope="col">Highest Qualification</th>
+              </tr>
+            </thead>
+            <tbody id="staff-table-body"></tbody>
+          </table>
+        </div>
       </div>
     </section>
   </main>
@@ -157,5 +188,6 @@
   </footer>
 
   <script src="../js/main.js"></script>
+  <script src="../js/faculty-staff.js"></script>
 </body>
 </html>

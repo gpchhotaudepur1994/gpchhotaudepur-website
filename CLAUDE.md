@@ -1,11 +1,11 @@
-# CLAUDE.md — Government Polytechnic Chhota Udepur Website
+# CLAUDE.md — Government Polytechnic, Chhotaudepur Website
 
 This file gives Claude Code (and any future contributor) the standing context and
 rules for this project. Read it before making changes.
 
 ## Project
 
-Official website for **Government Polytechnic Chhota Udepur**, Gujarat, a
+Official website for **Government Polytechnic, Chhotaudepur**, Gujarat, a
 government technical institution. Target domain: **gpchhotaudepur.ac.in**.
 
 This is a public-facing institutional website for a government body. Treat
@@ -24,7 +24,7 @@ important than visual novelty or technical sophistication.
    and general usability conventions common to Indian technical-institute
    websites. Never copy or adapt its logo, images, text, source code, colour
    scheme, or branding. The final design and copy must be original and
-   clearly branded for Government Polytechnic Chhota Udepur.
+   clearly branded for Government Polytechnic, Chhotaudepur.
 3. **Keep the stack simple.** HTML5, CSS3, and vanilla JavaScript only.
    - Do **not** introduce React, Vue, Next.js, or any other frontend
      framework.

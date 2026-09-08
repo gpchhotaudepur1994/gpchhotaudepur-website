@@ -1,4 +1,4 @@
-// Government Polytechnic Chhota Udepur — shared vanilla JS
+// Government Polytechnic, Chhotaudepur — shared vanilla JS
 // No frameworks, no build step. Loaded from every page via a document-relative
 // <script> path (e.g. "js/main.js" from root pages, "../js/main.js" from
 // pages one folder deep), so this file itself must not assume page depth.
