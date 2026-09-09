@@ -34,6 +34,11 @@
   --container-width: 1180px;
   --nav-breakpoint: 960px;
   --transition: 0.2s ease;
+
+  /* Site-wide text-size accessibility control (js/main.js) — a multiplier
+     applied to body's font-size, not to html's, so spacing/layout tokens
+     above (all in rem, relative to html) never move: only text does. */
+  --text-scale: 1;
 }
 
 /* ---------- Reset & base ---------- */
@@ -45,6 +50,15 @@ body {
   color: var(--color-text);
   background: var(--color-bg);
   line-height: 1.6;
+  font-size: calc(1rem * var(--text-scale));
+}
+/* Structural chrome stays a fixed size regardless of the text-size control —
+   only readable page content should grow/shrink. .utility-bar already pins
+   itself via its own fixed rem font-size further down; header nav links and
+   footer links have no such override, so they need it stated explicitly. */
+.site-header,
+.site-footer {
+  font-size: 1rem;
 }
 img { max-width: 100%; display: block; }
 ul { margin: 0; padding: 0; list-style: none; }
@@ -102,11 +116,15 @@ button { font: inherit; }
 }
 .section { padding-block: var(--space-7); }
 .section-alt { background: var(--color-bg-alt); }
-.section-title { font-size: 1.5rem; }
+.section-title { font-size: 1.5em; }
 .section-lede {
   color: var(--color-text-muted);
   max-width: 65ch;
 }
+/* Homepage About preview: one short sentence in a wide section — the shared
+   65ch cap above (sized for longer lede copy, e.g. departments.html) left
+   most of the section empty here, so let this one use the section's width. */
+#about-heading + .section-lede { max-width: none; }
 
 /* ---------- Utility bar ---------- */
 .utility-bar {
@@ -128,6 +146,45 @@ button { font: inherit; }
 }
 .utility-bar a:hover,
 .utility-bar a:focus-visible { opacity: 1; text-decoration: underline; }
+
+/* Text-size accessibility control — sits at the end of the utility bar on
+   every page (see js/main.js). Fixed size regardless of --text-scale: it's
+   a control, not page content (see .utility-bar's own font-size above). */
+.text-size-control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+.text-size-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75em;
+  padding: 0.15em 0.55em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition), opacity var(--transition);
+}
+.text-size-btn:hover:not(:disabled),
+.text-size-btn:focus-visible:not(:disabled) {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #1c1300;
+}
+.text-size-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.text-size-value {
+  white-space: nowrap;
+  opacity: 0.9;
+}
 
 /* ---------- Header & brand ---------- */
 .site-header {
@@ -292,8 +349,8 @@ button { font: inherit; }
   margin-inline: auto;
   padding: var(--space-8) var(--space-4);
 }
-.hero h1 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); max-width: 24ch; }
-.hero-tagline { color: #dce6f0; max-width: 60ch; font-size: 1.05rem; }
+.hero h1 { color: #fff; font-size: clamp(1.6em, 4vw, 2.4em); max-width: 24ch; }
+.hero-tagline { color: #dce6f0; max-width: 60ch; font-size: 1.05em; }
 .hero-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-5); }
 
 /* ---------- Buttons ---------- */
@@ -329,12 +386,12 @@ button { font: inherit; }
   margin: 0;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.75em;
   letter-spacing: 0.06em;
   color: var(--color-notice-border);
 }
 .notice-title { margin: 0; font-weight: 600; }
-.notice-date { margin: 0; color: var(--color-text-muted); font-size: 0.9rem; }
+.notice-date { margin: 0; color: var(--color-text-muted); font-size: 0.9em; }
 .notice-more { margin-left: auto; white-space: nowrap; font-weight: 600; text-decoration: none; }
 
 /* ---------- Links / Read more ---------- */
@@ -367,31 +424,30 @@ button { font: inherit; }
   border-color: var(--color-accent);
   box-shadow: 0 4px 14px rgba(11, 39, 64, 0.08);
 }
-.card h3 { margin-bottom: var(--space-2); font-size: 1.1rem; }
+.card h3 { margin-bottom: var(--space-2); font-size: 1.1em; }
 .card p { margin: 0; color: var(--color-text-muted); }
 
-/* ---------- Important Links grid ---------- */
-.links-grid {
+/* ---------- Course overview cards (academics/courses.html) ---------- */
+.course-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-3);
-  margin-top: var(--space-5);
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
 }
-.links-grid a {
-  display: block;
-  padding: var(--space-4);
+@media (min-width: 720px) {
+  .course-grid { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+.course-card {
+  padding: var(--space-5);
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  text-decoration: none;
-  font-weight: 600;
-  color: var(--color-primary-dark);
-  transition: border-color var(--transition), color var(--transition);
 }
-.links-grid a:hover, .links-grid a:focus-visible {
-  border-color: var(--color-accent);
-  color: var(--color-accent-dark);
-}
+.course-card h2 { margin-top: 0; margin-bottom: var(--space-3); font-size: 1.2em; }
+.course-card h3 { margin: var(--space-4) 0 var(--space-1); font-size: 0.95em; color: var(--color-primary-dark); }
+.course-card h3:first-of-type { margin-top: 0; }
+.course-card p { margin: 0; color: var(--color-text-muted); }
+.course-card .link-more { margin-top: var(--space-4); }
 
 /* ---------- Principal's message ---------- */
 .principal {
@@ -412,7 +468,7 @@ button { font: inherit; }
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.8em;
   padding: var(--space-2);
 }
 .principal-content { flex: 1; min-width: 240px; }
@@ -600,7 +656,7 @@ button { font: inherit; }
 }
 .staff-filter-field label {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.9em;
 }
 .staff-filter-field input,
 .staff-filter-field select {
@@ -613,7 +669,7 @@ button { font: inherit; }
   min-width: 240px;
 }
 #staff-status { color: var(--color-text-muted); }
-#staff-count { color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: var(--space-5); }
+#staff-count { color: var(--color-text-muted); font-size: 0.9em; margin-bottom: var(--space-5); }
 #staff-no-results {
   color: var(--color-text-muted);
   text-align: center;
@@ -640,7 +696,7 @@ button { font: inherit; }
 }
 .staff-department-name {
   font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: 1.05em;
   font-weight: 700;
   color: var(--color-primary-dark);
   letter-spacing: 0.02em;
@@ -648,7 +704,7 @@ button { font: inherit; }
 .staff-department-count {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 0.85rem;
+  font-size: 0.85em;
   color: var(--color-text-muted);
 }
 

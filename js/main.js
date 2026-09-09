@@ -11,6 +11,7 @@
 // depth. See CLAUDE.md "Path & link conventions".
 
 document.addEventListener("DOMContentLoaded", function () {
+  initTextSizeControl();
   initMobileNavToggle();
   initDropdowns();
   populateCollegeInfo();
@@ -18,6 +19,66 @@ document.addEventListener("DOMContentLoaded", function () {
   setCopyrightYear();
   populateVisitCounter();
 });
+
+// ---------- Site-wide text-size accessibility control ----------
+// One shared control (markup duplicated in the utility bar on every page,
+// same as the rest of the header) backed by one CSS custom property
+// (--text-scale, see css/style.css) so scaling readable content is a single
+// declaration rather than touching dozens of elements by hand. The level is
+// remembered in localStorage so it carries across every page.
+var TEXT_SCALE_LEVELS = [90, 100, 110, 120, 130];
+var TEXT_SCALE_STORAGE_KEY = "gpc-text-scale";
+
+function initTextSizeControl() {
+  var decreaseBtn = document.getElementById("text-size-decrease");
+  var increaseBtn = document.getElementById("text-size-increase");
+  var percentEl = document.getElementById("text-size-percent");
+  if (!decreaseBtn || !increaseBtn || !percentEl) return;
+
+  var current = readStoredTextScale();
+  applyTextScale(current, decreaseBtn, increaseBtn, percentEl);
+
+  decreaseBtn.addEventListener("click", function () {
+    var index = TEXT_SCALE_LEVELS.indexOf(current) - 1;
+    if (index < 0) return;
+    current = TEXT_SCALE_LEVELS[index];
+    storeTextScale(current);
+    applyTextScale(current, decreaseBtn, increaseBtn, percentEl);
+  });
+
+  increaseBtn.addEventListener("click", function () {
+    var index = TEXT_SCALE_LEVELS.indexOf(current) + 1;
+    if (index >= TEXT_SCALE_LEVELS.length) return;
+    current = TEXT_SCALE_LEVELS[index];
+    storeTextScale(current);
+    applyTextScale(current, decreaseBtn, increaseBtn, percentEl);
+  });
+}
+
+function readStoredTextScale() {
+  try {
+    var stored = parseInt(localStorage.getItem(TEXT_SCALE_STORAGE_KEY), 10);
+    if (TEXT_SCALE_LEVELS.indexOf(stored) !== -1) return stored;
+  } catch (e) {
+    // localStorage unavailable (privacy mode, etc.) — fall back to default.
+  }
+  return 100;
+}
+
+function storeTextScale(value) {
+  try {
+    localStorage.setItem(TEXT_SCALE_STORAGE_KEY, String(value));
+  } catch (e) {
+    // Ignore — the preference simply won't persist this session.
+  }
+}
+
+function applyTextScale(value, decreaseBtn, increaseBtn, percentEl) {
+  document.documentElement.style.setProperty("--text-scale", value / 100);
+  percentEl.textContent = String(value);
+  decreaseBtn.disabled = value === TEXT_SCALE_LEVELS[0];
+  increaseBtn.disabled = value === TEXT_SCALE_LEVELS[TEXT_SCALE_LEVELS.length - 1];
+}
 
 // ---------- Mobile hamburger menu ----------
 function initMobileNavToggle() {
