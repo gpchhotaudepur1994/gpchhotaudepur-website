@@ -190,6 +190,31 @@ they are ordinary site images, committed to the repo like any other image
 asset, not synced from Drive. Adding/replacing them later requires a normal
 file edit, same as any other page's images.
 
+## Affiliation — Google Drive documents
+
+`about/affiliation.html` follows the same pattern as "Training & Placement —
+Google Drive reports" above: it links out to Google Drive folders instead of
+hosting or listing individual documents.
+
+- **AICTE Approval / Extension of Approval (EOA)** links to:
+  `https://drive.google.com/drive/folders/1wI0hRcecBCugqkC7WWITaV4nBciBfGCs`
+- **GTU Affiliation** links to:
+  `https://drive.google.com/drive/folders/1k9SHSa6IzzAAcyQYhuuVeuVWrurrR1l9`
+
+Both links open in a new tab (`target="_blank" rel="noopener noreferrer"`),
+are never embedded, and never point at individual PDFs inside the folder —
+only the two root folders are linked, once each.
+
+**Why:** same reasoning as the TPO reports — staff maintaining these
+documents update them directly in Google Drive
+(`Published data / Affiliation / AICTE EOA` or `/ GTU Affiliation`) and need
+no website-editing ability at all.
+
+**How to apply:** never add per-document links, never embed either Drive
+folder, and never reproduce the Drive folder structure on the page. If a
+folder URL itself ever changes, that single link is the only edit
+`about/affiliation.html` should ever need.
+
 5. **Accessibility and standards.** This is a government website — aim for
    WCAG 2.1 AA and general alignment with the Guidelines for Indian
    Government Websites (GIGW): semantic HTML, proper heading structure,
@@ -223,7 +248,7 @@ without going back to the user.
 ```
 HOME
 ABOUT            → About College, Vision & Mission, Principal's Message,
-                   Administration, Organization Chart, Committees
+                   Administration, Organization Chart, Committees, Affiliation
 ACADEMICS        → Departments, Courses, Academic Calendar, Examination
 ADMISSIONS       → Admission Process, Courses & Intake, Fee Structure,
                    Important Dates
@@ -274,7 +299,9 @@ Google Drive reports" below.
 │   ├── principals-message.html
 │   ├── administration.html
 │   ├── organization-chart.html
-│   └── committees.html         (existence unconfirmed)
+│   ├── committees.html         (existence unconfirmed)
+│   └── affiliation.html        GTU/AICTE affiliation — see "Affiliation —
+│                                Google Drive documents" below
 ├── academics/
 │   ├── departments.html         Landing page — cards link into departments/,
 │   │                            built from data/departments.json by js/department.js
