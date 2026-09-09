@@ -257,15 +257,21 @@ STUDENTS         → Student Corner, Notices, Downloads, Examination (shared
 FACILITIES       → Library, Laboratories & Workshops, Hostel, Sports,
                    Campus Facilities
 TRAINING & PLACEMENT   (single page, no sub-items)
+RTI              (single page, no sub-items)
 GALLERY
 CONTACT
 ```
 
-Compliance/institutional links (RTI, Mandatory Disclosure, Accessibility,
-Grievance, Anti-Ragging, relevant government/education body links) are **not**
-in the primary nav — they live in an "Important Links" panel on the homepage
-and a matching Quick Links column in the footer, and only appear once the
-user confirms the item is real and supplies the link/document.
+**RTI is a deliberate exception to the rule below** — the user explicitly
+asked for it in the primary nav (between Training & Placement and Gallery),
+so it does not follow the "compliance links stay out of primary nav" default
+that still applies to the others.
+
+Other compliance/institutional links (Mandatory Disclosure, Accessibility,
+Grievance, Anti-Ragging, relevant government/education body links) are
+**not** in the primary nav — they live in an "Important Links" panel on the
+homepage and a matching Quick Links column in the footer, and only appear
+once the user confirms the item is real and supplies the link/document.
 
 **Existence not yet confirmed** for: Committees, Hostel, Sports, Student
 Activities. Their pages exist as structural placeholders only — see
@@ -276,6 +282,12 @@ sitemap as confirmation that the facility/committee exists.
 Placement Cell" copy, the TPO Google Drive reports link, and the four
 gallery photographs have all been supplied; see "Training & Placement —
 Google Drive reports" below.
+
+**RTI page exists but content is not yet confirmed** — `rti.html` is live
+in the primary nav, but its introduction and document-repository link are
+still `[PLACEHOLDER: ...]` per the placeholder convention above. No RTI
+officer name, procedure, contact detail, or Google Drive link has been
+supplied yet — do not invent any of these. See "Open decisions" below.
 
 ## Folder structure
 
@@ -293,6 +305,10 @@ Google Drive reports" below.
 │                                folder — see "Training & Placement — Google Drive
 │                                reports" below), and a photo gallery (4 photos, see
 │                                images/training-placement/)
+├── rti.html                    Right to Information (RTI) — primary nav item between
+│                                Training & Placement and Gallery; content is still
+│                                placeholder (see "Open decisions" below), not yet
+│                                confirmed content or a Google Drive link
 ├── about/
 │   ├── about-college.html
 │   ├── vision-mission.html
@@ -484,7 +500,12 @@ Not yet provided by the user — do not guess these:
   whether ERNET hosting imposes any specific constraints e.g. max file size,
   allowed file types, SSL setup)
 - Whether a contact form is desired, and if so what backend/service to use
-- Which Important Links / compliance items apply (RTI, Mandatory
+- Official RTI introduction text and the RTI Documents Google Drive folder
+  link for `rti.html` (page and nav placement exist; content is
+  placeholder — see "Approved sitemap / main navigation" above). No RTI
+  officer name, procedure, or contact detail has been supplied — do not
+  invent any of these.
+- Which other Important Links / compliance items apply (Mandatory
   Disclosure, Accessibility Statement, Grievance, Anti-Ragging, relevant
   government/education body links) and their actual URLs/documents
 - Whether any official social media accounts exist
