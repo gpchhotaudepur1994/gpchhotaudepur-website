@@ -464,6 +464,91 @@ button { font: inherit; }
   border-radius: var(--radius);
 }
 
+/* ---------- Photo carousel (e.g. Training & Placement gallery) ----------
+   Slides are absolutely positioned and cross-fade combined with a short
+   horizontal move (right -> center on entry, center -> left on exit), giving
+   a right-to-left feel without an abrupt slide. Non-active slides sit at
+   opacity: 0 in their default (right-hand) position, which also means the
+   whole thing degrades gracefully with JS disabled: only the first slide
+   (marked .is-active in the markup) is visible, still satisfying "one photo
+   at a time". See js/training-placement.js. */
+.carousel {
+  max-width: 720px;
+  margin-top: var(--space-5);
+}
+.carousel-track {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-alt);
+}
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  opacity: 0;
+  transform: translateX(4%);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+  pointer-events: none;
+}
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.carousel-slide.is-active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  z-index: 2;
+}
+.carousel-slide.is-leaving {
+  opacity: 0;
+  transform: translateX(-4%);
+  z-index: 1;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+.carousel-dot.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent-dark);
+}
+.carousel-dot:hover,
+.carousel-dot:focus-visible {
+  border-color: var(--color-accent-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-slide,
+  .carousel-slide.is-active,
+  .carousel-slide.is-leaving {
+    transition: opacity 0.4s ease;
+    transform: none;
+  }
+}
+
+/* ---------- External document repository link (e.g. TPO Google Drive) ---------- */
+.external-link-action { margin-top: var(--space-4); }
+
 /* ---------- Contact ---------- */
 .contact-grid {
   display: grid;

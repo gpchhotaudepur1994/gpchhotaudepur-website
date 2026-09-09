@@ -153,6 +153,43 @@ writable `data/` directory. If the chosen ERNET hosting doesn't support PHP,
 and every page will silently render with no visit-counter line — the rest of
 the site is completely unaffected either way.
 
+## Training & Placement — Google Drive reports
+
+`training-placement.html` intentionally does **not** list individual
+placement/training reports, or any placement statistics, on the website
+itself:
+
+- **Placement Reports** links out to a single official TPO Google Drive
+  folder — opened in a new tab
+  (`target="_blank" rel="noopener noreferrer"`):
+  `https://drive.google.com/drive/folders/1cqX9HySVaHBYLuiEIlfWvb4MHw42MCv0`.
+  That folder's own internal structure (`Published data / TPO / Placement
+  Reports`, `Training Reports`, `Other Reports`) is **not** reproduced on
+  the site, and the site never links to individual PDFs inside it — only
+  the TPO root folder is linked, once.
+- **Placement statistics** (year-wise placed-student counts) are **not**
+  shown on the website at all — that data is maintained only in the same
+  Drive repository. Never add a statistics table, or any placement
+  numbers/percentages/company names, to this page — real or placeholder.
+
+**Why:** the TPO staff who maintain these reports have no website-editing
+knowledge — no HTML/CSS/JS, no Git, no Claude Code, no server upload access.
+They only know how to add/replace files in Google Drive. Linking to the
+folder itself (rather than to individual files) means a newly uploaded or
+updated report appears to visitors immediately, with **zero** website
+changes required.
+
+**How to apply:** never add per-report links, never embed the Drive folder
+in an iframe, and never build a placement-statistics table on
+`training-placement.html`. If the Drive folder URL itself ever changes,
+that single link is the only edit this page should ever need.
+
+The page's four gallery photographs (`TPO_Picture1.jpg`–`TPO_Picture4.jpg`,
+in `images/training-placement/`) are unrelated to this Drive workflow —
+they are ordinary site images, committed to the repo like any other image
+asset, not synced from Drive. Adding/replacing them later requires a normal
+file edit, same as any other page's images.
+
 5. **Accessibility and standards.** This is a government website — aim for
    WCAG 2.1 AA and general alignment with the Guidelines for Indian
    Government Websites (GIGW): semantic HTML, proper heading structure,
@@ -205,10 +242,15 @@ in the primary nav — they live in an "Important Links" panel on the homepage
 and a matching Quick Links column in the footer, and only appear once the
 user confirms the item is real and supplies the link/document.
 
-**Existence not yet confirmed** for: Committees, Hostel, Training & Placement,
-Sports, Student Activities. Their pages exist as structural placeholders only
-— see "Placeholder convention" above and do not treat their presence in the
+**Existence not yet confirmed** for: Committees, Hostel, Sports, Student
+Activities. Their pages exist as structural placeholders only — see
+"Placeholder convention" above and do not treat their presence in the
 sitemap as confirmation that the facility/committee exists.
+
+**Training & Placement is confirmed** — official "About Training &
+Placement Cell" copy, the TPO Google Drive reports link, and the four
+gallery photographs have all been supplied; see "Training & Placement —
+Google Drive reports" below.
 
 ## Folder structure
 
@@ -221,7 +263,11 @@ sitemap as confirmation that the facility/committee exists.
 ├── index.html                 Homepage
 ├── gallery.html                Photo gallery
 ├── contact.html                Contact details, location, map
-├── training-placement.html     Training & Placement (existence unconfirmed)
+├── training-placement.html     Training & Placement — About TPO Cell (official copy),
+│                                Placement Reports (links out to the TPO Google Drive
+│                                folder — see "Training & Placement — Google Drive
+│                                reports" below), and a photo gallery (4 photos, see
+│                                images/training-placement/)
 ├── about/
 │   ├── about-college.html
 │   ├── vision-mission.html
@@ -265,13 +311,17 @@ sitemap as confirmation that the facility/committee exists.
 ├── js/
 │   ├── main.js                  Shared vanilla JS (nav toggle, notices/data rendering, etc.)
 │   ├── faculty-staff.js         about/faculty-staff.html only — see that page's own comment
-│   └── department.js            academics/departments.html + academics/departments/*.html —
-│                                 see "Department pages" below
+│   ├── department.js            academics/departments.html + academics/departments/*.html —
+│   │                             see "Department pages" below
+│   └── training-placement.js    training-placement.html only — drives the auto-advancing
+│                                 photo carousel in the Training & Placement Gallery section
 ├── images/
 │   ├── logo/                    Official college logo/emblem
 │   ├── banners/                  Homepage/section banner images
 │   ├── gallery/                  Photo gallery images
-│   └── departments/               Department-specific images
+│   ├── departments/               Department-specific images
+│   └── training-placement/        TPO Cell gallery photographs — TPO_Picture1-4.jpg,
+│                                   see "Training & Placement — Google Drive reports"
 ├── documents/                     Institutional PDFs (prospectus, mandatory disclosure,
 │                                  annual reports, RTI, etc.) — linked from content pages
 ├── notices/                        Notice/circular PDF files (referenced by data/notices.json)
@@ -397,9 +447,8 @@ Not yet provided by the user — do not guess these:
 - List of departments/branches offered and intake capacity
 - Admission process details and important dates
 - Whether the following actually exist at all, and if so their details:
-  Hostel, Training & Placement Cell, any Committees (Anti-Ragging, ICC/
-  Women's Cell, SC/ST Cell, etc.), Sports facilities, Student
-  Activities/clubs/NCC/NSS
+  Hostel, any Committees (Anti-Ragging, ICC/Women's Cell, SC/ST Cell, etc.),
+  Sports facilities, Student Activities/clubs/NCC/NSS
 - Facilities that do exist (library, labs/workshops, campus facilities)
 - Official logo/emblem artwork
 - Any existing brand colours, if the institute already has a visual identity
