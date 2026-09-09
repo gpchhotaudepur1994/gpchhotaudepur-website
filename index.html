@@ -122,28 +122,29 @@
       </div>
     </section>
 
-    <!-- 4. Important Notice — populated by js/main.js from data/notices.json.
-         Stays hidden (see [hidden] attribute) while notices.json is empty,
-         per "no empty sections on the homepage". -->
-    <section id="important-notice" class="notice-banner" aria-labelledby="notice-heading" hidden>
-      <div class="notice-banner-inner">
-        <p class="notice-label" id="notice-heading">Important Notice</p>
-        <p class="notice-title"><a id="notice-link" href="students/notices.html"></a></p>
-        <p class="notice-date" id="notice-date"></p>
-        <a class="notice-more" href="students/notices.html">View all notices &rarr;</a>
-      </div>
-    </section>
-
-    <!-- 5. About the College -->
+    <!-- 4. About the College, alongside the Latest Notices box (see
+         js/main.js populateHomepageNotices() — fetches once via the shared
+         fetchNotices() helper and auto-scrolls client-side; no polling). -->
     <section class="section" aria-labelledby="about-heading">
-      <div class="section-inner">
-        <h2 id="about-heading" class="section-title">About the College</h2>
-        <p class="section-lede">Government Polytechnic, Chhotaudepur is a government diploma engineering institute committed to providing quality technical education and supporting students from rural and tribal regions of Gujarat.</p>
-        <a class="link-more" href="about/about-college.html">Read More &rarr;</a>
+      <div class="section-inner about-notices-grid">
+        <div>
+          <h2 id="about-heading" class="section-title">About the College</h2>
+          <p class="section-lede">Government Polytechnic, Chhotaudepur is a government diploma engineering institute committed to providing quality technical education and supporting students from rural and tribal regions of Gujarat.</p>
+          <a class="link-more" href="about/about-college.html">Read More &rarr;</a>
+        </div>
+
+        <aside class="notice-box" aria-labelledby="latest-notices-heading">
+          <h3 id="latest-notices-heading" class="notice-box-title">Latest Notices</h3>
+          <div class="notice-scroll" id="homepage-notice-scroll" tabindex="0" aria-label="Latest notices, scrollable">
+            <p class="notice-box-status" id="homepage-notice-status" role="status">Loading notices&hellip;</p>
+            <ul class="notice-scroll-track" id="homepage-notice-track" hidden></ul>
+          </div>
+          <a class="link-more notice-box-viewall" href="students/notices.html">View all notices &rarr;</a>
+        </aside>
       </div>
     </section>
 
-    <!-- 6. Principal's Message -->
+    <!-- 5. Principal's Message -->
     <section class="section" aria-labelledby="principal-heading">
       <div class="section-inner principal">
         <div class="principal-photo-placeholder" aria-hidden="true">Photograph<br>pending</div>
@@ -157,20 +158,19 @@
       </div>
     </section>
 
-    <!-- 7. College Highlights / Statistics — omitted entirely.
+    <!-- 6. College Highlights / Statistics — omitted entirely.
          No verified numbers exist in project data yet. See CLAUDE.md
          "Homepage specification". -->
 
-    <!-- 8. Facilities — omitted entirely.
+    <!-- 7. Facilities — omitted entirely.
          No facility has been confirmed to exist in project data yet
          (see CLAUDE.md "Open decisions / pending information"). Add this
          section back, driven by confirmed facts, once available. -->
 
-    <!-- 9. Latest News / Events — omitted entirely.
-         No news/event data exists yet, and this is intentionally kept
-         separate from the Important Notice section above. -->
+    <!-- 8. Latest News / Events — omitted entirely.
+         No news/event data exists yet. -->
 
-    <!-- 10. Gallery -->
+    <!-- 9. Gallery -->
     <section class="section" aria-labelledby="gallery-heading">
       <div class="section-inner">
         <h2 id="gallery-heading" class="section-title">Photo Gallery</h2>
@@ -185,7 +185,7 @@
       </div>
     </section>
 
-    <!-- 11. Contact / map -->
+    <!-- 10. Contact / map -->
     <section class="section section-alt" aria-labelledby="contact-heading">
       <div class="section-inner contact-grid">
         <div>
@@ -204,7 +204,7 @@
     </section>
   </main>
 
-  <!-- 12. Footer -->
+  <!-- 11. Footer -->
   <footer class="site-footer">
     <div class="footer-grid">
       <div class="footer-col">

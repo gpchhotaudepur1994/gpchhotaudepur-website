@@ -338,7 +338,9 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │   └── important-dates.html
 ├── students/
 │   ├── student-corner.html
-│   ├── notices.html             Renders data/notices.json
+│   ├── notices.html             Notice Board — renders the Google Sheet notice
+│   │                             source via js/main.js fetchNotices(); see
+│   │                             "Notice Board Maintenance" below
 │   ├── downloads.html           Renders links to /downloads
 │   └── student-activities.html  (existence unconfirmed)
 │                                 Examination: linked to ../academics/examination.html,
@@ -367,11 +369,18 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │                                   see "Training & Placement — Google Drive reports"
 ├── documents/                     Institutional PDFs (prospectus, mandatory disclosure,
 │                                  annual reports, RTI, etc.) — linked from content pages
-├── notices/                        Notice/circular PDF files (referenced by data/notices.json)
+├── apps-script/
+│   └── notice-board.gs             Google Apps Script source (reference copy — deployed
+│                                    separately, not part of the website itself); see
+│                                    "Notice Board Maintenance" below
+├── notices/                        Notice/circular PDF files — only used if a Google Sheet
+│                                    row's Link column points here, or by the data/notices.json
+│                                    fallback (see "Notice Board Maintenance" below)
 ├── downloads/                      Downloadable forms/templates/syllabi (referenced by students/downloads.html)
 └── data/
     ├── college-info.json           Central facts (address, phone, email, affiliation, etc.)
-    ├── notices.json                Structured list of notices, consumed by students/notices.html
+    ├── notices.json                Fallback only, no longer the primary notice source — see
+    │                                "Notice Board Maintenance" below
     ├── staff.json                  Faculty/staff records — consumed by about/faculty-staff.html
     │                               (all departments) and js/department.js (one department at a time)
     ├── departments.json            The 6 departments: staff.json name, display name, page slug —
@@ -445,7 +454,10 @@ fetch this file and populate elements (e.g. the footer) via simple
 `data-field="phone"` style hooks. This stays plain vanilla JS/JSON — no
 templating engine, no build step.
 
-`notices.json` is the maintenance mechanism for notices/announcements:
+`notices.json` used to be the maintenance mechanism for notices — **it no
+longer is**. See "Notice Board Maintenance" below for the current,
+live system. The file is kept only as a last-resort fallback (see that
+section) and still uses its old shape if it's ever populated:
 
 ```json
 [
@@ -457,14 +469,54 @@ templating engine, no build step.
 ]
 ```
 
-**Routine update workflow for a non-programmer:**
-1. Drop the new notice PDF into `/notices/`.
-2. Add one entry to `data/notices.json` (date, title, file path).
-3. Save. No HTML/CSS/JS editing required. `students/notices.html` re-renders
-   the list automatically from the JSON on next page load, newest first.
+The same `data/` pattern applies to `students/downloads.html` / `/downloads/`
+once that page's JS is built.
 
-The same pattern applies to `students/downloads.html` / `/downloads/` once
-that page's JS is built.
+### Notice Board Maintenance
+
+Notices (the homepage "Latest Notices" box, the homepage "Important Notice"
+banner, and the Student Corner Notice Board at `students/notices.html`) are
+**live** — maintained in a Google Sheet, not in this repository. This is the
+one place a non-technical staff member updates directly. Staff do **not**
+need to edit the website's HTML, CSS, JavaScript, or JSON, and do not need
+Git — publishing or hiding a notice is a plain spreadsheet edit.
+
+**Required Google Sheet columns** (first row = headers, exact names):
+
+| Date | Notice | Description | Link | Active |
+|---|---|---|---|---|
+
+- `Active` = `Yes` publishes the notice; `Active` = `No` (or anything else)
+  hides/archives it. Rows aren't required to be in any particular order —
+  sorting is done for you, newest first.
+- `Link` is optional. If present, the site shows a "View Notice →" button
+  (Drive link, PDF, or any URL); if empty, no button is shown.
+
+**How the website reads the sheet:** a Google Apps Script Web App is the
+public, read-only bridge between the Sheet and the site (a reference copy
+of one implementation is kept at `apps-script/notice-board.gs`, for
+context only — it is not run by the website and is not necessarily
+identical to whatever is actually deployed). The site's `js/main.js`
+fetches JSON from that Apps Script URL once per page load (never polls) via
+the shared `fetchNotices()` function, which every notice display on the
+site calls — one data source, reused everywhere, per this project's usual
+"single source of truth" convention (see `college-info.json` above). The
+frontend re-sorts (newest first) and re-checks `Active` itself regardless
+of what the endpoint already did, rather than assuming either is correct.
+
+**Where the endpoint URL is configured:** the `NOTICE_API_URL` constant near
+the top of `js/main.js` — the only place it appears in the website. There is
+no Sheet ID anywhere in the website either; that lives only inside the
+deployed Apps Script itself, never in client-side code, so it's never
+exposed to a visitor's browser.
+
+**Fallback:** if the Apps Script endpoint is ever unreachable,
+`fetchNotices()` falls back to the local `data/notices.json` (old
+`{date, title, file}` shape) so the site degrades gracefully instead of
+showing an error, rather than depending on that file for live content. This
+is an automatic safety net only, invisible to staff — never maintain
+notices by editing that file; the Google Sheet is the single source of
+truth.
 
 Per-department subpages now exist under `academics/departments/` — see
 "Department pages" above.
@@ -519,7 +571,7 @@ soon" boxes, no zeroed-out stat counters).
 1. Utility bar
 2. Main header & navigation
 3. Hero/banner
-4. Important Notice / announcement (most recent entry from `data/notices.json`)
+4. Important Notice / announcement (most recent notice — see "Notice Board Maintenance")
 5. About the College (short summary + link to `about/about-college.html`)
 6. Courses / Departments (summary + links into `academics/`)
 7. Principal's Message (short excerpt + link to full page)

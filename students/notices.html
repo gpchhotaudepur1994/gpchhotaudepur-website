@@ -112,9 +112,14 @@
     <section class="section" aria-labelledby="page-heading">
       <div class="section-inner stacked-sections">
         <h1 id="page-heading" class="section-title">Notices &amp; Announcements</h1>
-        <!-- TODO: js/main.js fetches /data/notices.json (root-relative fetch — see CLAUDE.md) and renders entries here -->
-        <ul id="notices-list"></ul>
-        <p id="notices-empty">[PLACEHOLDER: No notices published yet]</p>
+        <!-- js/main.js populateNoticesBoard() fetches once via the shared
+             fetchNotices() helper (Google Sheet via Apps Script, with a
+             data/notices.json fallback — see CLAUDE.md "Notice Board
+             Maintenance") and renders entries here. -->
+        <p class="notice-box-status" id="notices-status" role="status">Loading notices&hellip;</p>
+        <ul class="notice-list" id="notices-list" hidden></ul>
+        <p id="notices-empty" hidden>No notices published yet.</p>
+        <p id="notices-error" hidden>Notices are currently unavailable.</p>
 
         <h2>GTU Circulars</h2>
         <p>For official information and updates related to various university activities, students are advised to visit the Gujarat Technological University (GTU) website.</p>
