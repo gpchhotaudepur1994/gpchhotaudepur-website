@@ -846,17 +846,12 @@ button { font: inherit; }
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
 }
-.chart-placeholder {
-  max-width: 960px;
-  margin: var(--space-5) auto;
-  padding: var(--space-6) var(--space-4);
-  border: 2px dashed var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-bg-alt);
-  color: var(--color-text-muted);
+.chart-figure figcaption {
+  margin-top: var(--space-2);
   text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
-
 .sr-only {
   position: absolute;
   width: 1px;
