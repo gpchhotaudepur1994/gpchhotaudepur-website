@@ -348,7 +348,6 @@ button { font: inherit; }
   padding: var(--space-8) var(--space-4);
 }
 .hero h1 { color: #fff; font-size: clamp(1.6em, 4vw, 2.4em); max-width: 24ch; }
-.hero-tagline { color: #dce6f0; max-width: 60ch; font-size: 1.05em; }
 .hero-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-5); }
 
 /* ---------- Buttons ---------- */
@@ -509,23 +508,7 @@ button { font: inherit; }
   flex-wrap: wrap;
   align-items: flex-start;
 }
-.principal-photo-placeholder {
-  flex-shrink: 0;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 2px dashed var(--color-border);
-  background: var(--color-bg-alt);
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 0.8em;
-  padding: var(--space-2);
-}
 .principal-content { flex: 1; min-width: 240px; }
-.principal-name { font-weight: 700; margin-bottom: var(--space-1); }
 
 /* ---------- Mission / statement lists (Vision & Mission, etc.) ---------- */
 .mission-list {
@@ -827,6 +810,51 @@ button { font: inherit; }
     font-weight: 600;
     color: var(--color-text-muted);
   }
+}
+
+/* A single supporting photograph inside page body copy — sized down from
+   full section width (rather than object-fit) so the full photograph shows
+   with no cropping and no distortion. */
+.content-photo {
+  max-width: 640px;
+  margin: var(--space-5) auto;
+}
+.content-photo img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.content-photo figcaption {
+  margin-top: var(--space-2);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* A large diagram (e.g. an organization chart) — wider than .content-photo
+   since its text needs to stay legible, but still capped and centered
+   rather than running full section width. */
+.chart-figure {
+  max-width: 960px;
+  margin: var(--space-5) auto;
+}
+.chart-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.chart-placeholder {
+  max-width: 960px;
+  margin: var(--space-5) auto;
+  padding: var(--space-6) var(--space-4);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-alt);
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 .sr-only {
