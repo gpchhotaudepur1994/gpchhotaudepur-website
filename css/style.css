@@ -205,12 +205,12 @@ button { font: inherit; }
 }
 .brand-emblem {
   flex-shrink: 0;
-  height: 44px;
+  height: 58px;
   width: auto;
   display: block;
 }
 @media (min-width: 960px) {
-  .brand-emblem { height: 56px; }
+  .brand-emblem { height: 74px; }
 }
 .brand-text { display: flex; flex-direction: column; }
 .brand-name {
