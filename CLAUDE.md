@@ -250,8 +250,7 @@ HOME
 ABOUT            → About College, Vision & Mission, Principal's Message,
                    Administration, Organization Chart, Committees, Affiliation
 ACADEMICS        → Departments, Courses, Academic Calendar, Examination
-ADMISSIONS       → Admission Process, Courses & Intake, Fee Structure,
-                   Important Dates
+ADMISSIONS       → Admission Process, Courses & Intake, Important Dates
 STUDENTS         → Student Corner, Notices, Downloads, Examination (shared
                    page, see below), Student Activities
 FACILITIES       → Library, Laboratories & Workshops, Hostel, Sports,
@@ -326,7 +325,6 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │   │   ├── civil-engineering.html
 │   │   ├── electrical-engineering.html
 │   │   ├── mechanical-engineering.html
-│   │   ├── plastic-engineering.html
 │   │   └── science-and-humanity.html
 │   ├── courses.html
 │   ├── academic-calendar.html
@@ -334,8 +332,9 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 ├── admissions/
 │   ├── admission-process.html
 │   ├── courses-intake.html
-│   ├── fee-structure.html
-│   └── important-dates.html
+│   └── important-dates.html                Fee Structure was removed from the
+│                                            Admissions dropdown and its page
+│                                            deleted at the user's request.
 ├── students/
 │   ├── student-corner.html
 │   ├── notices.html             Notice Board — renders the Google Sheet notice
@@ -397,10 +396,15 @@ duplicate page. Keep it this way so there is only ever one copy to maintain.
 
 ## Department pages
 
-There are exactly **six** departments, each with **one** page (not a
+There are exactly **five** departments, each with **one** page (not a
 separate page per Vision/Mission/PSO/etc.) under `academics/departments/`:
 Automobile Engineering, Civil Engineering, Electrical Engineering,
-Mechanical Engineering, Plastic Engineering, and Science and Humanity.
+Mechanical Engineering, and Science and Humanity. Plastic Engineering was
+removed from the Departments listing and its page deleted at the user's
+request; `data/departments.json` no longer lists it. Faculty records tagged
+`"PLASTIC ENGINEERING"` in `data/staff.json` were left untouched (they're
+unrelated data, still shown on `about/faculty-staff.html`'s full directory)
+and should not be treated as evidence the department page should return.
 Science and Humanity is included as a full department page even though it's
 a common-subject/service department rather than a diploma-granting program —
 don't treat its presence as implying it grants its own diploma.
@@ -422,8 +426,13 @@ Vision"):
 - Program Outcomes
 - Program Specific Outcomes (PSOs)
 - Faculty & Staff
-- Courses
 - Laboratories / Facilities
+
+A standalone "Courses" section/heading was removed from every department
+page at the user's request — course information for a department lives only
+on the main `academics/courses.html` page, not repeated per department.
+Don't re-add a "Courses" heading to a department page without the user
+asking for it again.
 
 **Faculty & Staff is the only section backed by real data right now** —
 `populateDepartmentStaff()` in `js/department.js` reads the department name
