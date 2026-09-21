@@ -33,6 +33,13 @@
   --nav-breakpoint: 960px;
   --transition: 0.2s ease;
 
+  /* Dropdown open/close motion (desktop hover/focus-within/click and the
+     mobile accordion's opening fade) — a slightly slower ease-out on open,
+     a quicker one on close so the menu feels responsive, not sluggish. */
+  --dropdown-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dropdown-duration-open: 200ms;
+  --dropdown-duration-close: 140ms;
+
   /* Site-wide text-size accessibility control (js/main.js) — a multiplier
      applied to body's font-size, not to html's, so spacing/layout tokens
      above (all in rem, relative to html) never move: only text does. */
@@ -286,21 +293,42 @@ button { font: inherit; }
 .dropdown-toggle:hover { color: var(--color-accent-dark); }
 .dropdown-arrow { font-size: 0.7em; margin-left: var(--space-2); }
 
+/* Mobile accordion: display:none/flex keeps the closed menu out of the
+   document flow (no gap in the stacked list), so the entrance uses a CSS
+   *animation* (not a transition) — animations run when an element goes
+   from display:none to rendered, which a transition cannot do. Closing is
+   an instant display:none, which reads as fast/responsive on touch rather
+   than needing a matching exit animation. */
+@keyframes dropdown-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .dropdown-menu {
   display: none;
   flex-direction: column;
   padding-left: var(--space-4);
   padding-bottom: var(--space-2);
 }
-.nav-item.is-open > .dropdown-menu { display: flex; }
+.nav-item.is-open > .dropdown-menu {
+  display: flex;
+  animation: dropdown-fade-in var(--dropdown-duration-open) var(--dropdown-ease);
+}
 .dropdown-menu li a {
   display: block;
   padding: var(--space-2);
+  margin-inline: var(--space-2);
+  border-radius: 4px;
   text-decoration: none;
   color: var(--color-text);
+  background-color: transparent;
+  transition: background-color var(--transition), color var(--transition);
 }
 .dropdown-menu li a:hover,
-.dropdown-menu li a:focus-visible { color: var(--color-accent-dark); }
+.dropdown-menu li a:focus-visible {
+  background-color: var(--color-primary-tint);
+  color: var(--color-accent-dark);
+}
 
 @media (min-width: 960px) {
   .header-inner { flex-wrap: nowrap; }
@@ -318,6 +346,11 @@ button { font: inherit; }
   .dropdown-toggle { padding: var(--space-3) var(--space-3); }
 
   .dropdown-menu {
+    /* Always laid out (position:absolute already removes it from flow, so
+       this costs nothing) and hidden via opacity/visibility instead of
+       display — that's what lets the close direction transition smoothly
+       instead of vanishing instantly like the mobile accordion. */
+    display: flex;
     position: absolute;
     top: 100%;
     left: 0;
@@ -327,10 +360,23 @@ button { font: inherit; }
     box-shadow: 0 10px 24px rgba(11, 39, 64, 0.12);
     padding: var(--space-2) 0;
     z-index: 60;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-5px);
+    animation: none;
+    transition: opacity var(--dropdown-duration-close) var(--dropdown-ease),
+                transform var(--dropdown-duration-close) var(--dropdown-ease),
+                visibility var(--dropdown-duration-close) var(--dropdown-ease);
   }
   .nav-item.has-dropdown:hover > .dropdown-menu,
-  .nav-item.has-dropdown:focus-within > .dropdown-menu {
-    display: flex;
+  .nav-item.has-dropdown:focus-within > .dropdown-menu,
+  .nav-item.is-open > .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-duration: var(--dropdown-duration-open);
   }
 }
 
@@ -540,20 +586,6 @@ button { font: inherit; }
   flex-direction: column;
   gap: var(--space-3);
   max-width: 70ch;
-}
-
-/* ---------- Gallery preview ---------- */
-.gallery-preview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--space-3);
-  margin: var(--space-5) 0;
-}
-.gallery-placeholder-tile {
-  aspect-ratio: 4 / 3;
-  background: var(--color-bg-alt);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius);
 }
 
 /* ---------- Photo carousel (e.g. Training & Placement gallery) ----------
