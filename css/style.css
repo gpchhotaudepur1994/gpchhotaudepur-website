@@ -382,9 +382,21 @@ button { font: inherit; }
 
 /* ---------- Hero ---------- */
 .hero {
-  background: var(--color-primary);
+  background-color: var(--color-primary);
+  /* JPEG fallback first: browsers without image-set() support ignore the
+     second declaration below (invalid value) and keep this one. */
   background-image:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 28px);
+    linear-gradient(rgba(11, 39, 64, 0.6), rgba(11, 39, 64, 0.6)),
+    url("../images/home/college-building.jpg");
+  background-image:
+    linear-gradient(rgba(11, 39, 64, 0.6), rgba(11, 39, 64, 0.6)),
+    image-set(
+      url("../images/home/college-building.webp") type("image/webp"),
+      url("../images/home/college-building.jpg") type("image/jpeg")
+    );
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #fff;
   border-bottom: 4px solid var(--color-accent);
 }
