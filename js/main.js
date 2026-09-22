@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initTextSizeControl();
   initMobileNavToggle();
   initDropdowns();
+  initHeaderScroll();
   populateCollegeInfo();
   populateHomepageNotices();
   populateNoticesBoard();
@@ -97,13 +98,38 @@ function applyTextScale(value, decreaseBtn, increaseBtn, percentEl) {
 function initMobileNavToggle() {
   var toggle = document.getElementById("nav-toggle");
   var menu = document.getElementById("primary-menu");
+  var header = document.querySelector(".site-header");
   if (!toggle || !menu) return;
 
   toggle.addEventListener("click", function () {
     var isOpen = menu.classList.toggle("is-open");
     toggle.setAttribute("aria-expanded", String(isOpen));
+    if (header) header.classList.toggle("nav-open", isOpen);
     if (!isOpen) closeAllDropdowns();
   });
+}
+
+// ---------- Sticky header: translucent-when-scrolled state ----------
+// Toggles one class off a lightweight, passive scroll listener — no rAF loop,
+// no per-frame style reads/writes. The actual translucent/opaque/hover
+// styling lives entirely in CSS (see .site-header.header-scrolled and
+// friends in css/style.css); this just tracks "has the user scrolled".
+function initHeaderScroll() {
+  var header = document.querySelector(".site-header");
+  if (!header) return;
+
+  var SCROLL_THRESHOLD = 8;
+  var isScrolled = false;
+
+  function update() {
+    var shouldBeScrolled = window.scrollY > SCROLL_THRESHOLD;
+    if (shouldBeScrolled === isScrolled) return;
+    isScrolled = shouldBeScrolled;
+    header.classList.toggle("header-scrolled", isScrolled);
+  }
+
+  update();
+  window.addEventListener("scroll", update, { passive: true });
 }
 
 // ---------- Dropdown menus (About, Academics, Admissions, Students, Facilities) ----------

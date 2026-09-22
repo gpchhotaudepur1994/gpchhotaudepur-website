@@ -192,9 +192,46 @@ button { font: inherit; }
 }
 
 /* ---------- Header & brand ---------- */
+/* Sticky (not fixed) so it re-joins the flow with no height to compensate for
+   — the utility bar above it simply scrolls away first, then the header
+   sticks at top:0. z-index 500 keeps it above ordinary page content while
+   staying under .skip-link's 1000, which must win on focus. */
 .site-header {
   background: var(--color-bg);
   border-bottom: 3px solid var(--color-accent);
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  transition: background-color var(--transition);
+}
+/* Scrolled state: background alpha only, never opacity, so the logo, nav
+   text and controls inside stay fully readable — see CLAUDE.md-adjacent task
+   notes. rgba(255,255,255,…) mirrors --color-bg (#fff); custom properties
+   can't be split into r/g/b components for rgba() without a second token. */
+.site-header.header-scrolled {
+  background-color: rgba(255, 255, 255, 0.55);
+}
+/* Keyboard focus always restores full opacity, on every pointer type. */
+.site-header.header-scrolled:focus-within {
+  background-color: var(--color-bg);
+}
+/* Hover restore is scoped to devices with reliable hover (mouse/trackpad) —
+   touch browsers can latch :hover after a tap with no matching "leave"
+   event, which would strand the header opaque or flickering. */
+@media (hover: hover) and (pointer: fine) {
+  .site-header.header-scrolled:hover {
+    background-color: var(--color-bg);
+  }
+}
+/* Mobile menu open always wins over the translucent scrolled state,
+   regardless of hover/focus above, so menu items stay readable. */
+.site-header.header-scrolled.nav-open {
+  background-color: var(--color-bg);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .site-header.header-scrolled {
+    background-color: var(--color-bg);
+  }
 }
 .header-inner {
   display: flex;
