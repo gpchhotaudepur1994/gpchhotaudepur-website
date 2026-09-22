@@ -34,9 +34,14 @@ document.addEventListener("DOMContentLoaded", function () {
       statusEl.hidden = true;
       directory.hidden = false;
       applyFilters();
+      // The directory above is built from scratch each time, so any element
+      // carrying a data-i18n key (department headings, table headers) needs
+      // one immediate translation pass if Gujarati is already active —
+      // otherwise it would sit in English until the next language toggle.
+      if (document.documentElement.lang === "gu" && i18nActiveDict) applyGujarati(i18nActiveDict);
     })
     .catch(function () {
-      statusEl.textContent = "Staff information could not be loaded right now. Please try again later.";
+      statusEl.textContent = t("staff.errorLoading", "Staff information could not be loaded right now. Please try again later.");
       directory.hidden = true;
     });
 
@@ -76,6 +81,9 @@ document.addEventListener("DOMContentLoaded", function () {
       var nameEl = document.createElement("span");
       nameEl.className = "staff-department-name";
       nameEl.textContent = department;
+      if (DEPARTMENT_NAME_I18N_KEYS[department]) {
+        nameEl.setAttribute("data-i18n", DEPARTMENT_NAME_I18N_KEYS[department]);
+      }
 
       var countEl2 = document.createElement("span");
       countEl2.className = "staff-department-count";
@@ -93,10 +101,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
       var thead = document.createElement("thead");
       var headRow = document.createElement("tr");
-      ["Name", "Designation", "Highest Qualification"].forEach(function (label) {
+      [
+        { text: "Name", key: "staff.colName" },
+        { text: "Designation", key: "staff.colDesignation" },
+        { text: "Highest Qualification", key: "staff.colQualification" }
+      ].forEach(function (col) {
         var th = document.createElement("th");
         th.scope = "col";
-        th.textContent = label;
+        th.textContent = col.text;
+        th.setAttribute("data-i18n", col.key);
         headRow.appendChild(th);
       });
       thead.appendChild(headRow);
@@ -104,9 +117,9 @@ document.addEventListener("DOMContentLoaded", function () {
       var tbody = document.createElement("tbody");
       var rows = members.map(function (person) {
         var tr = document.createElement("tr");
-        tr.appendChild(makeCell(person.name, "Name"));
-        tr.appendChild(makeCell(person.designation, "Designation"));
-        tr.appendChild(makeCell(person.highestQualification, "Highest Qualification"));
+        tr.appendChild(makeCell(person.name, "Name", "staff.colName"));
+        tr.appendChild(makeCell(person.designation, "Designation", "staff.colDesignation"));
+        tr.appendChild(makeCell(person.highestQualification, "Highest Qualification", "staff.colQualification"));
         tbody.appendChild(tr);
         return { tr: tr, name: person.name || "" };
       });
@@ -142,7 +155,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (matches) visibleCount++;
       });
 
-      section.countEl.textContent = " · " + visibleCount + (visibleCount === 1 ? " staff member" : " staff members");
+      var fallbackDeptCount = " · " + visibleCount + (visibleCount === 1 ? " staff member" : " staff members");
+      section.countEl.textContent = tTemplate("staff.deptMemberCount", { count: visibleCount }, fallbackDeptCount);
 
       if (visibleCount === 0) {
         section.element.hidden = true;
@@ -153,7 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    countEl.textContent = "Showing " + visibleTotal + " of " + allStaff.length + " staff members.";
+    var fallbackShowing = "Showing " + visibleTotal + " of " + allStaff.length + " staff members.";
+    countEl.textContent = tTemplate("staff.showingCount", { shown: visibleTotal, total: allStaff.length }, fallbackShowing);
     noResultsEl.hidden = anySectionVisible;
   }
 
@@ -170,14 +185,18 @@ document.addEventListener("DOMContentLoaded", function () {
       var option = document.createElement("option");
       option.value = department;
       option.textContent = department;
+      if (DEPARTMENT_NAME_I18N_KEYS[department]) {
+        option.setAttribute("data-i18n", DEPARTMENT_NAME_I18N_KEYS[department]);
+      }
       departmentSelect.appendChild(option);
     });
   }
 
-  function makeCell(text, label) {
+  function makeCell(text, label, labelKey) {
     var cell = document.createElement("td");
     cell.textContent = text || "";
     cell.setAttribute("data-label", label);
+    if (labelKey) cell.setAttribute("data-i18n-label", labelKey);
     return cell;
   }
 

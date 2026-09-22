@@ -44,10 +44,19 @@ function populateDepartmentsIndex() {
 
         var heading = document.createElement("h3");
         heading.textContent = department.displayName;
+        if (DEPARTMENT_NAME_I18N_KEYS[department.name]) {
+          heading.setAttribute("data-i18n", DEPARTMENT_NAME_I18N_KEYS[department.name]);
+        }
         link.appendChild(heading);
 
         grid.appendChild(link);
       });
+
+      // Cards above are built from scratch each time, so translate them
+      // immediately if Gujarati is already the active language — otherwise
+      // they'd sit in English until the next language toggle (see the
+      // matching comment in js/faculty-staff.js).
+      if (document.documentElement.lang === "gu" && i18nActiveDict) applyGujarati(i18nActiveDict);
     })
     .catch(function () {
       if (statusEl) statusEl.hidden = false;
@@ -77,29 +86,31 @@ function populateDepartmentStaff() {
       });
 
       if (members.length === 0) {
-        statusEl.textContent = "No staff records are currently listed for this department.";
+        statusEl.textContent = t("dept.noStaffRecords", "No staff records are currently listed for this department.");
         return;
       }
 
       members.forEach(function (person) {
         var row = document.createElement("tr");
-        row.appendChild(makeCell(person.name, "Name"));
-        row.appendChild(makeCell(person.designation, "Designation"));
-        row.appendChild(makeCell(person.highestQualification, "Highest Qualification"));
+        row.appendChild(makeCell(person.name, "Name", "staff.colName"));
+        row.appendChild(makeCell(person.designation, "Designation", "staff.colDesignation"));
+        row.appendChild(makeCell(person.highestQualification, "Highest Qualification", "staff.colQualification"));
         tableBody.appendChild(row);
       });
 
       statusEl.hidden = true;
       tableWrapper.hidden = false;
+      if (document.documentElement.lang === "gu" && i18nActiveDict) applyGujarati(i18nActiveDict);
     })
     .catch(function () {
-      statusEl.textContent = "Staff information could not be loaded right now. Please try again later.";
+      statusEl.textContent = t("staff.errorLoading", "Staff information could not be loaded right now. Please try again later.");
     });
 
-  function makeCell(text, label) {
+  function makeCell(text, label, labelKey) {
     var cell = document.createElement("td");
     cell.textContent = text || "";
     cell.setAttribute("data-label", label);
+    if (labelKey) cell.setAttribute("data-i18n-label", labelKey);
     return cell;
   }
 }

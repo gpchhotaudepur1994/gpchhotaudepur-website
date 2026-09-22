@@ -1,0 +1,32 @@
+{
+  "academics.departments.lede": "સરકારી પોલિટેકનિક, છોટાઉદેપુર નીચે મુજબના વિભાગોમાં કાર્યક્રમો પ્રદાન કરે છે.",
+  "academics.departments.error": "વિભાગની માહિતી હાલમાં લોડ કરી શકાઈ નથી. કૃપા કરી પછીથી ફરી પ્રયાસ કરો.",
+
+  "academics.courses.p1": "સરકારી પોલિટેકનિક, છોટાઉદેપુર ટેકનિકલ જ્ઞાન, પ્રાયોગિક કૌશલ્યો અને ઉદ્યોગ માટેની તૈયારી વિકસાવવા માટે રચાયેલા ડિપ્લોમા કાર્યક્રમો પ્રદાન કરે છે. દરેક કાર્યક્રમ વર્ગખંડ શિક્ષણને પ્રયોગશાળા કાર્ય, પ્રાયોગિક તાલીમ અને પ્રોજેક્ટ-આધારિત શિક્ષણ સાથે જોડે છે.",
+  "academics.courses.p2": "વિદ્યાર્થીઓ ડિપ્લોમા પૂર્ણ કર્યા બાદ સંબંધિત ઉદ્યોગોમાં રોજગાર મેળવી શકે છે અથવા લાગુ પડતા ઉચ્ચ અભ્યાસના માર્ગો દ્વારા પોતાનું શિક્ષણ ચાલુ રાખી શકે છે.",
+  "academics.courses.whatYouWillStudy": "તમે શું ભણશો",
+  "academics.courses.careerOpportunities": "કારકિર્દીની તકો",
+  "academics.courses.higherStudies": "ઉચ્ચ અભ્યાસ",
+  "academics.courses.viewDepartment": "વિભાગ જુઓ",
+
+  "academics.calendar.gtuHeading": "GTU શૈક્ષણિક કેલેન્ડર",
+  "academics.calendar.gtuText1": "સરકારી પોલિટેકનિક, છોટાઉદેપુર સંબંધિત શૈક્ષણિક સત્ર માટે ગુજરાત ટેકનોલોજીકલ યુનિવર્સિટી (GTU), અમદાવાદ દ્વારા પ્રકાશિત શૈક્ષણિક કેલેન્ડરને અનુસરે છે.",
+  "academics.calendar.gtuText2": "વિદ્યાર્થીઓ અને અન્ય હિતધારકોને શૈક્ષણિક સમયપત્રક, મહત્વની તારીખો અને અન્ય યુનિવર્સિટી સંબંધિત સમયરેખાઓ માટે સત્તાવાર GTU શૈક્ષણિક કેલેન્ડરનો સંદર્ભ લેવાની સલાહ આપવામાં આવે છે.",
+  "academics.calendar.viewGtu": "GTU શૈક્ષણિક કેલેન્ડર જુઓ",
+  "academics.calendar.instituteHeading": "સંસ્થાનું શૈક્ષણિક કેલેન્ડર",
+  "academics.calendar.instituteText": "સંસ્થાનું શૈક્ષણિક કેલેન્ડર સંદર્ભ માટે નીચે આપવામાં આવ્યું છે.",
+  "academics.calendar.viewInstitute": "સંસ્થાનું શૈક્ષણિક કેલેન્ડર જુઓ",
+
+  "dept.aboutHeading": "વિભાગ વિશે",
+  "dept.programOutcomesHeading": "કાર્યક્રમ પરિણામો",
+  "dept.psoHeading": "કાર્યક્રમ વિશિષ્ટ પરિણામો (PSOs)",
+  "dept.labsHeading": "પ્રયોગશાળાઓ / સુવિધાઓ",
+  "dept.viewFullDirectory": "સંપૂર્ણ અધ્યાપક અને કર્મચારીગણ ડિરેક્ટરી જુઓ",
+  "dept.noStaffRecords": "આ વિભાગ માટે હાલમાં કોઈ સ્ટાફ રેકોર્ડ સૂચિબદ્ધ નથી.",
+  "dept.automobileEngineering": "ઓટોમોબાઇલ એન્જિનિયરિંગ",
+  "dept.civilEngineering": "સિવિલ એન્જિનિયરિંગ",
+  "dept.electricalEngineering": "ઇલેક્ટ્રિકલ એન્જિનિયરિંગ",
+  "dept.mechanicalEngineering": "મિકેનિકલ એન્જિનિયરિંગ",
+  "dept.scienceAndHumanity": "સાયન્સ એન્ડ હ્યુમેનિટી",
+  "dept.plasticEngineering": "પ્લાસ્ટિક એન્જિનિયરિંગ"
+}

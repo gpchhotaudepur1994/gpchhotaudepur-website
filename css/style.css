@@ -722,6 +722,18 @@ button { font: inherit; }
 /* ---------- External document repository link (e.g. TPO Google Drive) ---------- */
 .external-link-action { margin-top: var(--space-4); }
 
+/* ---------- Important note callout (e.g. college-fee vs. GTU-fee clarification) ----------
+   Left accent border echoes .mission-list li; tint background echoes
+   .notice-box/.data-table hover — reuses existing tokens rather than
+   introducing a new (e.g. red/alarm) warning style. */
+.important-note {
+  background: var(--color-primary-tint);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+}
+.important-note strong { color: var(--color-primary-dark); }
+
 /* ---------- Contact ---------- */
 .contact-grid {
   display: grid;

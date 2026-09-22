@@ -7,22 +7,23 @@
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a class="skip-link" href="#main-content"><span data-i18n="common.skipLink">Skip to main content</span></a>
 
   <!-- Utility bar -->
   <div class="utility-bar">
     <div class="utility-bar-inner">
       <ul>
-        <li><a href="../admissions/index.html">Admissions</a></li>
-        <li><a href="../students/notices.html">Notices</a></li>
-        <li><a href="../students/downloads.html">Downloads</a></li>
-        <li><a href="../contact.html">Contact</a></li>
+        <li><a href="../admissions/index.html"><span data-i18n="nav.admissions">Admissions</span></a></li>
+        <li><a href="../students/notices.html"><span data-i18n="nav.notices">Notices</span></a></li>
+        <li><a href="../students/downloads.html"><span data-i18n="nav.downloads">Downloads</span></a></li>
+        <li><a href="../contact.html"><span data-i18n="nav.contact">Contact</span></a></li>
       </ul>
-      <div class="text-size-control" role="group" aria-label="Text size">
-        <button type="button" class="text-size-btn" id="text-size-decrease" aria-label="Decrease text size">A&minus;</button>
-        <span class="text-size-value" aria-live="polite" aria-atomic="true">Text <span id="text-size-percent">100</span>%</span>
-        <button type="button" class="text-size-btn" id="text-size-increase" aria-label="Increase text size">A+</button>
+      <div class="text-size-control" role="group" aria-label="Text size" data-i18n-aria="common.textSizeGroupLabel">
+        <button type="button" class="text-size-btn" id="text-size-decrease" data-i18n-aria="common.decreaseTextSize" aria-label="Decrease text size">A&minus;</button>
+        <span class="text-size-value" aria-live="polite" aria-atomic="true"><span data-i18n="common.textSizeLabel">Text</span> <span id="text-size-percent">100</span>%</span>
+        <button type="button" class="text-size-btn" id="text-size-increase" data-i18n-aria="common.increaseTextSize" aria-label="Increase text size">A+</button>
       </div>
+      <button type="button" class="text-size-btn" id="lang-toggle" aria-label="ગુજરાતીમાં જુઓ">ગુજરાતી</button>
     </div>
   </div>
 
@@ -32,76 +33,76 @@
       <a class="brand" href="../index.html">
         <img class="brand-emblem" src="../images/logo/college-logo-small.png" alt="" width="56" height="56">
         <span class="brand-text">
-          <span class="brand-name">Government Polytechnic, Chhotaudepur</span>
-          <span class="brand-sub">Gujarat</span>
+          <span class="brand-name" data-i18n="common.instituteName">Government Polytechnic, Chhotaudepur</span>
+          <span class="brand-sub" data-i18n="common.stateName">Gujarat</span>
         </span>
       </a>
 
       <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
         <span class="nav-toggle-icon" aria-hidden="true"></span>
-        Menu
+        <span data-i18n="common.menu">Menu</span>
       </button>
 
       <nav class="primary-nav" aria-label="Main navigation">
         <ul id="primary-menu" class="primary-menu">
-          <li class="nav-item"><a href="../index.html">Home</a></li>
+          <li class="nav-item"><a href="../index.html"><span data-i18n="nav.home">Home</span></a></li>
 
           <li class="nav-item has-dropdown">
-            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-about">About <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
+            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-about"><span data-i18n="nav.about">About</span> <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
             <ul id="menu-about" class="dropdown-menu">
-              <li><a href="../about/about-college.html">About College</a></li>
-              <li><a href="../about/vision-mission.html">Vision &amp; Mission</a></li>
-              <li><a href="../about/principals-message.html">Principal's Message</a></li>
-              <li><a href="../about/organization-chart.html">Organization Chart</a></li>
-              <li><a href="../about/committees.html">Committees</a></li>
-              <li><a href="../about/faculty-staff.html">Faculty &amp; Staff</a></li>
-              <li><a href="../about/affiliation.html">Affiliation</a></li>
+              <li><a href="../about/about-college.html"><span data-i18n="nav.aboutCollege">About College</span></a></li>
+              <li><a href="../about/vision-mission.html"><span data-i18n="nav.visionMission">Vision &amp; Mission</span></a></li>
+              <li><a href="../about/principals-message.html"><span data-i18n="nav.principalsMessage">Principal's Message</span></a></li>
+              <li><a href="../about/organization-chart.html"><span data-i18n="nav.organizationChart">Organization Chart</span></a></li>
+              <li><a href="../about/committees.html"><span data-i18n="nav.committees">Committees</span></a></li>
+              <li><a href="../about/faculty-staff.html"><span data-i18n="nav.facultyStaff">Faculty &amp; Staff</span></a></li>
+              <li><a href="../about/affiliation.html"><span data-i18n="nav.affiliation">Affiliation</span></a></li>
             </ul>
           </li>
 
           <li class="nav-item has-dropdown">
-            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-academics">Academics <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
+            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-academics"><span data-i18n="nav.academics">Academics</span> <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
             <ul id="menu-academics" class="dropdown-menu">
-              <li><a href="../academics/departments.html">Departments</a></li>
-              <li><a href="../academics/courses.html">Courses</a></li>
-              <li><a href="../academics/academic-calendar.html">Academic Calendar</a></li>
+              <li><a href="../academics/departments.html"><span data-i18n="nav.departments">Departments</span></a></li>
+              <li><a href="../academics/courses.html"><span data-i18n="nav.courses">Courses</span></a></li>
+              <li><a href="../academics/academic-calendar.html"><span data-i18n="nav.academicCalendar">Academic Calendar</span></a></li>
             </ul>
           </li>
 
           <li class="nav-item has-dropdown">
-            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-admissions">Admissions <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
+            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-admissions"><span data-i18n="nav.admissions">Admissions</span> <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
             <ul id="menu-admissions" class="dropdown-menu">
-              <li><a href="../admissions/admission-process.html" aria-current="page">Admission Process</a></li>
-              <li><a href="../admissions/courses-intake.html">Courses &amp; Intake</a></li>
+              <li><a href="../admissions/admission-process.html" aria-current="page"><span data-i18n="nav.admissionProcess">Admission Process</span></a></li>
+              <li><a href="../admissions/courses-intake.html"><span data-i18n="nav.coursesIntake">Courses &amp; Intake</span></a></li>
             </ul>
           </li>
 
           <li class="nav-item has-dropdown">
-            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-students">Student Corner <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
+            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-students"><span data-i18n="nav.studentCorner">Student Corner</span> <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
             <ul id="menu-students" class="dropdown-menu">
-              <li><a href="../students/student-corner.html">Student Corner</a></li>
-              <li><a href="../students/notices.html">Notices</a></li>
-              <li><a href="../students/syllabus.html">Syllabus</a></li>
-              <li><a href="../students/downloads.html">Downloads</a></li>
-              <li><a href="../students/student-activities.html">Student Activities</a></li>
+              <li><a href="../students/student-corner.html"><span data-i18n="nav.studentCorner">Student Corner</span></a></li>
+              <li><a href="../students/notices.html"><span data-i18n="nav.notices">Notices</span></a></li>
+              <li><a href="../students/syllabus.html"><span data-i18n="nav.syllabus">Syllabus</span></a></li>
+              <li><a href="../students/downloads.html"><span data-i18n="nav.downloads">Downloads</span></a></li>
+              <li><a href="../students/student-activities.html"><span data-i18n="nav.studentActivities">Student Activities</span></a></li>
             </ul>
           </li>
 
           <li class="nav-item has-dropdown">
-            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-facilities">Facilities <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
+            <button class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="menu-facilities"><span data-i18n="nav.facilities">Facilities</span> <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
             <ul id="menu-facilities" class="dropdown-menu">
-              <li><a href="../facilities/library.html">Library</a></li>
-              <li><a href="../facilities/laboratories-workshops.html">Laboratories &amp; Workshops</a></li>
-              <li><a href="../facilities/hostel.html">Hostel</a></li>
-              <li><a href="../facilities/sports.html">Sports</a></li>
-              <li><a href="../facilities/campus-facilities.html">Campus Facilities</a></li>
+              <li><a href="../facilities/library.html"><span data-i18n="nav.library">Library</span></a></li>
+              <li><a href="../facilities/laboratories-workshops.html"><span data-i18n="nav.laboratoriesWorkshops">Laboratories &amp; Workshops</span></a></li>
+              <li><a href="../facilities/hostel.html"><span data-i18n="nav.hostel">Hostel</span></a></li>
+              <li><a href="../facilities/sports.html"><span data-i18n="nav.sports">Sports</span></a></li>
+              <li><a href="../facilities/campus-facilities.html"><span data-i18n="nav.campusFacilities">Campus Facilities</span></a></li>
             </ul>
           </li>
 
-          <li class="nav-item"><a href="../training-placement.html">Training &amp; Placement</a></li>
-          <li class="nav-item"><a href="../rti.html">RTI</a></li>
-          <li class="nav-item"><a href="../gallery.html">Gallery</a></li>
-          <li class="nav-item"><a href="../contact.html">Contact</a></li>
+          <li class="nav-item"><a href="../training-placement.html"><span data-i18n="nav.trainingPlacement">Training &amp; Placement</span></a></li>
+          <li class="nav-item"><a href="../rti.html"><span data-i18n="nav.rti">RTI</span></a></li>
+          <li class="nav-item"><a href="../gallery.html"><span data-i18n="nav.gallery">Gallery</span></a></li>
+          <li class="nav-item"><a href="../contact.html"><span data-i18n="nav.contact">Contact</span></a></li>
         </ul>
       </nav>
     </div>
@@ -110,14 +111,14 @@
   <main id="main-content">
     <section class="section" aria-labelledby="page-heading">
       <div class="section-inner">
-        <h1 id="page-heading" class="section-title">Admission Process</h1>
-        <p>Admission to diploma programmes at Government Polytechnic, Chhotaudepur is conducted through the Admission Committee for Professional Diploma Courses (ACPDC), Gujarat.</p>
-        <p>ACPDC manages the merit-based admission process for First Year Diploma, Second Year Diploma, and Second Year Diploma for Working Professionals across participating institutes in Gujarat.</p>
+        <h1 id="page-heading" class="section-title" data-i18n="nav.admissionProcess">Admission Process</h1>
+        <p data-i18n="admissions.overview.p1">Admission to diploma programmes at Government Polytechnic, Chhotaudepur is conducted through the Admission Committee for Professional Diploma Courses (ACPDC), Gujarat.</p>
+        <p data-i18n="admissions.overview.p2">ACPDC manages the merit-based admission process for First Year Diploma, Second Year Diploma, and Second Year Diploma for Working Professionals across participating institutes in Gujarat.</p>
 
-        <h2>Admission Committee for Professional Diploma Courses (ACPDC), Gujarat</h2>
-        <p>For admission rules, application procedures, merit lists, important dates, counselling, and other admission-related information, please visit the official ACPDC website.</p>
+        <h2 data-i18n="admissions.acpdcHeading">Admission Committee for Professional Diploma Courses (ACPDC), Gujarat</h2>
+        <p data-i18n="admissions.acpdcText">For admission rules, application procedures, merit lists, important dates, counselling, and other admission-related information, please visit the official ACPDC website.</p>
         <p class="external-link-action">
-          <a class="btn btn-primary" href="https://acpdc.gujarat.gov.in/" target="_blank" rel="noopener noreferrer">Visit Official ACPDC Website &rarr;<span class="sr-only"> (opens in a new tab)</span></a>
+          <a class="btn btn-primary" href="https://acpdc.gujarat.gov.in/" target="_blank" rel="noopener noreferrer"><span data-i18n="admissions.visitAcpdc">Visit Official ACPDC Website</span> &rarr;<span class="sr-only" data-i18n="common.opensNewTab"> (opens in a new tab)</span></a>
         </p>
       </div>
     </section>
@@ -127,45 +128,45 @@
   <footer class="site-footer">
     <div class="footer-grid">
       <div class="footer-col">
-        <p class="footer-brand">Government Polytechnic, Chhotaudepur</p>
-        <p>Gujarat</p>
+        <p class="footer-brand" data-i18n="common.instituteName">Government Polytechnic, Chhotaudepur</p>
+        <p data-i18n="common.stateName">Gujarat</p>
         <address>
           <p>Fatepura-Baroda Highway,<br>Chhotaudepur - 391165</p>
-          <p>Phone: <a href="tel:02669232754">02669-232754</a></p>
+          <p><span data-i18n="common.phoneLabel">Phone:</span> <a href="tel:02669232754">02669-232754</a></p>
           <p><a href="mailto:gpchhotaudepur@yahoo.co.in">gpchhotaudepur@yahoo.co.in</a></p>
         </address>
       </div>
 
       <div class="footer-col">
-        <h3>Important Links</h3>
+        <h3 data-i18n="footer.importantLinks">Important Links</h3>
         <ul>
-          <li><a href="../admissions/index.html">Admissions</a></li>
-          <li><a href="../students/notices.html">Notices</a></li>
-          <li><a href="../students/downloads.html">Downloads</a></li>
-          <li><a href="../gallery.html">Gallery</a></li>
-          <li><a href="../contact.html">Contact</a></li>
+          <li><a href="../admissions/index.html"><span data-i18n="nav.admissions">Admissions</span></a></li>
+          <li><a href="../students/notices.html"><span data-i18n="nav.notices">Notices</span></a></li>
+          <li><a href="../students/downloads.html"><span data-i18n="nav.downloads">Downloads</span></a></li>
+          <li><a href="../gallery.html"><span data-i18n="nav.gallery">Gallery</span></a></li>
+          <li><a href="../contact.html"><span data-i18n="nav.contact">Contact</span></a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h3>Sitemap</h3>
+        <h3 data-i18n="footer.sitemap">Sitemap</h3>
         <ul>
-          <li><a href="../index.html">Home</a></li>
-          <li><a href="../about/about-college.html">About</a></li>
-          <li><a href="../academics/departments.html">Academics</a></li>
-          <li><a href="../admissions/index.html">Admissions</a></li>
-          <li><a href="../students/student-corner.html">Student Corner</a></li>
-          <li><a href="../facilities/library.html">Facilities</a></li>
-          <li><a href="../training-placement.html">Training &amp; Placement</a></li>
-          <li><a href="../rti.html">RTI</a></li>
+          <li><a href="../index.html"><span data-i18n="nav.home">Home</span></a></li>
+          <li><a href="../about/about-college.html"><span data-i18n="nav.about">About</span></a></li>
+          <li><a href="../academics/departments.html"><span data-i18n="nav.academics">Academics</span></a></li>
+          <li><a href="../admissions/index.html"><span data-i18n="nav.admissions">Admissions</span></a></li>
+          <li><a href="../students/student-corner.html"><span data-i18n="nav.studentCorner">Student Corner</span></a></li>
+          <li><a href="../facilities/library.html"><span data-i18n="nav.facilities">Facilities</span></a></li>
+          <li><a href="../training-placement.html"><span data-i18n="nav.trainingPlacement">Training &amp; Placement</span></a></li>
+          <li><a href="../rti.html"><span data-i18n="nav.rti">RTI</span></a></li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>Disclaimer: While every effort is made to keep the information on this website accurate and up to date, the information is subject to change without prior notice.</p>
-      <p>&copy; <span id="copyright-year"></span> Government Polytechnic, Chhotaudepur. All rights reserved.</p>
-      <p id="visit-counter" hidden>Website Visits: <span id="visit-count"></span></p>
+      <p data-i18n="footer.disclaimer">Disclaimer: While every effort is made to keep the information on this website accurate and up to date, the information is subject to change without prior notice.</p>
+      <p>&copy; <span id="copyright-year"></span> <span data-i18n="common.instituteName">Government Polytechnic, Chhotaudepur</span>. <span data-i18n="common.allRightsReserved">All rights reserved.</span></p>
+      <p id="visit-counter" hidden><span data-i18n="common.websiteVisits">Website Visits:</span> <span id="visit-count"></span></p>
     </div>
   </footer>
 

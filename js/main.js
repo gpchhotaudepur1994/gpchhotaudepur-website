@@ -24,6 +24,7 @@ var NOTICE_FALLBACK_URL = "/data/notices.json";
 
 document.addEventListener("DOMContentLoaded", function () {
   initTextSizeControl();
+  initLanguageSwitcher();
   initMobileNavToggle();
   initDropdowns();
   initHeaderScroll();
@@ -92,6 +93,204 @@ function applyTextScale(value, decreaseBtn, increaseBtn, percentEl) {
   percentEl.textContent = String(value);
   decreaseBtn.disabled = value === TEXT_SCALE_LEVELS[0];
   increaseBtn.disabled = value === TEXT_SCALE_LEVELS[TEXT_SCALE_LEVELS.length - 1];
+}
+
+// ---------- Sitewide English / Gujarati language switcher ----------
+// One toggle button (js/main.js's initLanguageSwitcher(), markup: #lang-toggle
+// in the utility bar on every page) flips every [data-i18n]/[data-i18n-aria]
+// element's text between the English already baked into the HTML (the site's
+// only source of truth for English copy — never duplicated in JSON) and a
+// Gujarati string looked up from the local translation files below. No
+// external translation service, no page reload: the current page's DOM is
+// rewritten in place and the choice is remembered in localStorage so it
+// carries across every future page load. See CLAUDE.md-adjacent project
+// conventions for the equivalent --text-scale pattern this mirrors.
+var SITE_LANGUAGE_STORAGE_KEY = "gpc-site-language";
+
+// Split by section purely for maintainability (so one editor can update, say,
+// the Facilities pages' Gujarati without touching every other file) — the
+// loader below fetches and merges all of them into one lookup table. Root-
+// relative for the same reason as every other JSON fetch in this file (see
+// file header comment): works from any page depth.
+var I18N_GU_FILES = [
+  "/data/i18n/gu-common.json",
+  "/data/i18n/gu-home.json",
+  "/data/i18n/gu-about.json",
+  "/data/i18n/gu-academics.json",
+  "/data/i18n/gu-admissions.json",
+  "/data/i18n/gu-students.json",
+  "/data/i18n/gu-facilities.json",
+  "/data/i18n/gu-misc.json"
+];
+var guTranslationsRequest = null;
+// Set once the merged dictionary resolves, so the handful of user-facing
+// strings that JS builds dynamically (e.g. the notice box's empty/error
+// states, which don't exist as static HTML for data-i18n to target) can look
+// themselves up too, via t() below — without waiting on a second fetch.
+var i18nActiveDict = null;
+
+function initLanguageSwitcher() {
+  var toggle = document.getElementById("lang-toggle");
+  if (!toggle) return;
+
+  var lang = readStoredLanguage();
+  setSiteLanguage(lang, toggle);
+
+  toggle.addEventListener("click", function () {
+    var next = document.documentElement.lang === "gu" ? "en" : "gu";
+    storeLanguage(next);
+    setSiteLanguage(next, toggle);
+  });
+}
+
+function readStoredLanguage() {
+  try {
+    var v = localStorage.getItem(SITE_LANGUAGE_STORAGE_KEY);
+    if (v === "gu" || v === "en") return v;
+  } catch (e) {
+    // localStorage unavailable — fall back to the default below.
+  }
+  return "en";
+}
+
+function storeLanguage(lang) {
+  try {
+    localStorage.setItem(SITE_LANGUAGE_STORAGE_KEY, lang);
+  } catch (e) {
+    // Ignore — the preference simply won't persist this session.
+  }
+}
+
+// The toggle always names the OTHER language (what clicking it switches to),
+// per the requested "ગુજરાતી" / "English" labelling — never a generic,
+// ambiguous "Language" label.
+function setSiteLanguage(lang, toggle) {
+  document.documentElement.lang = lang;
+  if (lang === "gu") {
+    toggle.textContent = "English";
+    toggle.setAttribute("aria-label", "Switch to English");
+    loadGuTranslations()
+      .then(applyGujarati)
+      .catch(function () {
+        // Translation files unreachable (e.g. local file:// preview) — leave
+        // the page in English rather than showing broken/partial content.
+      });
+  } else {
+    toggle.textContent = "ગુજરાતી";
+    toggle.setAttribute("aria-label", "ગુજરાતીમાં જુઓ");
+    restoreEnglish();
+  }
+}
+
+function loadGuTranslations() {
+  if (guTranslationsRequest) return guTranslationsRequest;
+  guTranslationsRequest = Promise.all(
+    I18N_GU_FILES.map(function (url) {
+      return fetchJSON(url).catch(function () { return {}; });
+    })
+  ).then(function (parts) {
+    var merged = {};
+    parts.forEach(function (part) {
+      for (var key in part) {
+        if (Object.prototype.hasOwnProperty.call(part, key)) merged[key] = part[key];
+      }
+    });
+    i18nActiveDict = merged;
+    return merged;
+  });
+  return guTranslationsRequest;
+}
+
+// Looks up a dynamically-built (non-data-i18n) string, e.g. a notice status
+// message assembled in JS rather than sitting in the page as static HTML.
+// Falls back to the English literal whenever Gujarati isn't active yet
+// (before the dictionary has loaded, or when the page is in English).
+function t(key, fallback) {
+  if (document.documentElement.lang === "gu" && i18nActiveDict && key in i18nActiveDict) {
+    return i18nActiveDict[key];
+  }
+  return fallback;
+}
+
+// Like t(), but for strings built around a number/name whose word order
+// differs between English and Gujarati (e.g. "Showing 3 of 12" vs. "12 માંથી
+// 3 દર્શાવ્યા") — the Gujarati dictionary value carries {placeholder} tokens
+// instead of a fixed slot order. fallbackFinal is the already-assembled
+// English string (not a template), since the English callsite already knows
+// how to build it.
+function tTemplate(key, vars, fallbackFinal) {
+  if (document.documentElement.lang === "gu" && i18nActiveDict && key in i18nActiveDict) {
+    var template = i18nActiveDict[key];
+    for (var name in vars) {
+      template = template.split("{" + name + "}").join(vars[name]);
+    }
+    return template;
+  }
+  return fallbackFinal;
+}
+
+// Department names in data/staff.json and data/departments.json are a fixed,
+// small set of ALL-CAPS strings (not free text), so a lookup — not machine
+// translation — is enough to translate every place they're rendered
+// (js/faculty-staff.js's grouped headings, js/department.js's cards).
+// Shared here since both scripts load main.js first (see each file's own
+// header comment on why they aren't bundled into one script).
+var DEPARTMENT_NAME_I18N_KEYS = {
+  "AUTOMOBILE ENGINEERING": "dept.automobileEngineering",
+  "CIVIL ENGINEERING": "dept.civilEngineering",
+  "ELECTRICAL ENGINEERING": "dept.electricalEngineering",
+  "MECHANICAL ENGINEERING": "dept.mechanicalEngineering",
+  "SCIENCE AND HUMANITY": "dept.scienceAndHumanity",
+  "PLASTIC ENGINEERING": "dept.plasticEngineering"
+};
+
+// data-i18n translates textContent; each data-i18n-<X> variant below
+// translates one HTML attribute instead (aria-label, alt, placeholder, the
+// data-label a responsive table reads via CSS attr() — see css/style.css's
+// .staff-table td::before). Listed as {dataAttr, htmlAttr} pairs and applied
+// through one shared loop rather than one copy-pasted block per attribute.
+var I18N_ATTR_TARGETS = [
+  { dataAttr: "i18nAria", htmlAttr: "aria-label" },
+  { dataAttr: "i18nAlt", htmlAttr: "alt" },
+  { dataAttr: "i18nPlaceholder", htmlAttr: "placeholder" },
+  { dataAttr: "i18nLabel", htmlAttr: "data-label" },
+  { dataAttr: "i18nTitle", htmlAttr: "title" }
+];
+
+// Caches each element's original English on first translation (in a data-
+// attribute, on the element itself) rather than in a separate JS-side table,
+// so restoreEnglish() below needs no second data source and stays correct
+// even if elements are added/removed between calls.
+function applyGujarati(dict) {
+  document.querySelectorAll("[data-i18n]").forEach(function (el) {
+    var key = el.getAttribute("data-i18n");
+    if (!(key in dict)) return;
+    if (el.dataset.i18nEn === undefined) el.dataset.i18nEn = el.textContent;
+    el.textContent = dict[key];
+  });
+  I18N_ATTR_TARGETS.forEach(function (target) {
+    var selector = "[data-" + target.dataAttr.replace(/([A-Z])/g, "-$1").toLowerCase() + "]";
+    var cacheField = target.dataAttr + "En";
+    document.querySelectorAll(selector).forEach(function (el) {
+      var key = el.getAttribute("data-" + target.dataAttr.replace(/([A-Z])/g, "-$1").toLowerCase());
+      if (!(key in dict)) return;
+      if (el.dataset[cacheField] === undefined) el.dataset[cacheField] = el.getAttribute(target.htmlAttr) || "";
+      el.setAttribute(target.htmlAttr, dict[key]);
+    });
+  });
+}
+
+function restoreEnglish() {
+  document.querySelectorAll("[data-i18n]").forEach(function (el) {
+    if (el.dataset.i18nEn !== undefined) el.textContent = el.dataset.i18nEn;
+  });
+  I18N_ATTR_TARGETS.forEach(function (target) {
+    var selector = "[data-" + target.dataAttr.replace(/([A-Z])/g, "-$1").toLowerCase() + "]";
+    var cacheField = target.dataAttr + "En";
+    document.querySelectorAll(selector).forEach(function (el) {
+      if (el.dataset[cacheField] !== undefined) el.setAttribute(target.htmlAttr, el.dataset[cacheField]);
+    });
+  });
 }
 
 // ---------- Mobile hamburger menu ----------
@@ -332,7 +531,7 @@ function populateHomepageNotices() {
   fetchNotices()
     .then(function (notices) {
       if (notices.length === 0) {
-        statusEl.textContent = "No notices published yet.";
+        statusEl.textContent = t("home.notices.empty", "No notices published yet.");
         return;
       }
 
@@ -345,7 +544,7 @@ function populateHomepageNotices() {
       startNoticeAutoScroll(scrollEl, trackEl);
     })
     .catch(function () {
-      statusEl.textContent = "Notices are currently unavailable.";
+      statusEl.textContent = t("home.notices.unavailable", "Notices are currently unavailable.");
     });
 }
 
