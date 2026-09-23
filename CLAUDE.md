@@ -250,7 +250,7 @@ HOME
 ABOUT            → About College, Vision & Mission, Principal's Message,
                    Administration, Organization Chart, Committees, Affiliation
 ACADEMICS        → Departments, Courses, Academic Calendar, Examination
-ADMISSIONS       → Admission Process, Courses & Intake, Important Dates
+ADMISSIONS       → Admissions, Courses & Intake
 STUDENTS         → Student Corner, Notices, Downloads, Examination (shared
                    page, see below), Student Activities
 FACILITIES       → Library, Laboratories & Workshops, Hostel, Sports,
@@ -330,7 +330,10 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │   ├── academic-calendar.html
 │   └── examination.html        Shared page — also linked from Students nav
 ├── admissions/
-│   ├── admission-process.html
+│   ├── index.html               Admissions landing page — ACPDC admission process
+│   │                            info and official link. admission-process.html was
+│   │                            a near-duplicate of this page and was consolidated
+│   │                            into it, then deleted, at the user's request.
 │   ├── courses-intake.html
 │   └── important-dates.html                Fee Structure was removed from the
 │                                            Admissions dropdown and its page
