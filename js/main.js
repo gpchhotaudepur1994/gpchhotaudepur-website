@@ -3,12 +3,33 @@
 // <script> path (e.g. "js/main.js" from root pages, "../js/main.js" from
 // pages one folder deep), so this file itself must not assume page depth.
 //
-// fetch() calls below use ROOT-RELATIVE paths ("/data/...") on purpose: JSON
-// data can only be fetched when the site is served over HTTP (even a simple
-// local server), never via a plain double-clicked file:// page, so there is
-// no file:// compatibility to preserve here — using a root-relative path
-// keeps this one shared file correct from every page regardless of folder
-// depth. See CLAUDE.md "Path & link conventions".
+// fetch() calls below resolve against SITE_BASE_URL (see below) rather than a
+// hardcoded root-relative "/..." path: JSON/PHP data can only be fetched when
+// the site is served over HTTP (even a simple local server) — never via a
+// plain double-clicked file:// page — so there's no file:// compatibility to
+// preserve here, but a literal leading "/" resolves against the domain root,
+// which breaks as soon as the whole site is served from a subpath (e.g. a
+// GitHub Pages project site at https://user.github.io/repo/). SITE_BASE_URL
+// is derived at runtime from this very script's own resolved URL instead, so
+// the same file keeps working unmodified from every page depth and under any
+// deployment target — domain root, GitHub Pages subpath, or a future custom
+// domain. See CLAUDE.md "Path & link conventions".
+var SITE_BASE_URL = (function () {
+  var scripts = document.getElementsByTagName("script");
+  for (var i = 0; i < scripts.length; i++) {
+    var src = scripts[i].src;
+    if (src && /(^|\/)js\/main\.js(\?.*)?$/.test(src)) {
+      return src.replace(/js\/main\.js(\?.*)?$/, "");
+    }
+  }
+  return "/"; // Fallback: behaves like the previous hardcoded root-relative paths.
+})();
+
+// Resolves a site-root-relative path (no leading slash, e.g.
+// "data/college-info.json") against SITE_BASE_URL above.
+function siteUrl(path) {
+  return SITE_BASE_URL + path;
+}
 
 // ---------- Notice Board configuration ----------
 // The one place the Google Apps Script Web App URL is configured — see
@@ -20,7 +41,7 @@ var NOTICE_API_URL = "https://script.google.com/macros/s/AKfycbz3N206RqebNuwImTh
 // Local fallback only — NOT the primary source. Kept so the homepage/Notice
 // Board still degrade gracefully (rather than showing an error) if the Apps
 // Script endpoint above is unreachable or not yet configured. See CLAUDE.md.
-var NOTICE_FALLBACK_URL = "/data/notices.json";
+var NOTICE_FALLBACK_URL = siteUrl("data/notices.json");
 
 document.addEventListener("DOMContentLoaded", function () {
   initTextSizeControl();
@@ -109,18 +130,18 @@ var SITE_LANGUAGE_STORAGE_KEY = "gpc-site-language";
 
 // Split by section purely for maintainability (so one editor can update, say,
 // the Facilities pages' Gujarati without touching every other file) — the
-// loader below fetches and merges all of them into one lookup table. Root-
-// relative for the same reason as every other JSON fetch in this file (see
-// file header comment): works from any page depth.
+// loader below fetches and merges all of them into one lookup table. Resolved
+// via siteUrl() for the same reason as every other JSON fetch in this file
+// (see file header comment): works from any page depth and deployment subpath.
 var I18N_GU_FILES = [
-  "/data/i18n/gu-common.json",
-  "/data/i18n/gu-home.json",
-  "/data/i18n/gu-about.json",
-  "/data/i18n/gu-academics.json",
-  "/data/i18n/gu-admissions.json",
-  "/data/i18n/gu-students.json",
-  "/data/i18n/gu-facilities.json",
-  "/data/i18n/gu-misc.json"
+  siteUrl("data/i18n/gu-common.json"),
+  siteUrl("data/i18n/gu-home.json"),
+  siteUrl("data/i18n/gu-about.json"),
+  siteUrl("data/i18n/gu-academics.json"),
+  siteUrl("data/i18n/gu-admissions.json"),
+  siteUrl("data/i18n/gu-students.json"),
+  siteUrl("data/i18n/gu-facilities.json"),
+  siteUrl("data/i18n/gu-misc.json")
 ];
 var guTranslationsRequest = null;
 // Set once the merged dictionary resolves, so the handful of user-facing
@@ -373,7 +394,7 @@ function closeAllDropdowns() {
 
 // ---------- Shared college facts (data/college-info.json) ----------
 function populateCollegeInfo() {
-  fetchJSON("/data/college-info.json")
+  fetchJSON(siteUrl("data/college-info.json"))
     .then(function (info) {
       if (!info) return;
       document.querySelectorAll("[data-field]").forEach(function (el) {
@@ -639,17 +660,17 @@ function setCopyrightYear() {
 // ---------- Global site-wide visit counter (counter.php) ----------
 // One counter for the whole site, not one per page: every page load hits the
 // same server-side endpoint, which increments a single shared file and hands
-// back the new total. Root-relative ("/counter.php") for the same reason as
-// the JSON fetches above — one path works from every page depth. counter.php
-// requires PHP-enabled hosting (see CLAUDE.md); if it's unavailable the
-// fetch/parse below simply fails and the element stays hidden, so a missing
-// or broken counter never affects the rest of the page.
+// back the new total. Resolved via siteUrl() for the same reason as the JSON
+// fetches above — one path works from every page depth and deployment
+// subpath. counter.php requires PHP-enabled hosting (see CLAUDE.md); if it's
+// unavailable the fetch/parse below simply fails and the element stays
+// hidden, so a missing or broken counter never affects the rest of the page.
 function populateVisitCounter() {
   var wrapper = document.getElementById("visit-counter");
   var valueEl = document.getElementById("visit-count");
   if (!wrapper || !valueEl) return;
 
-  fetch("/counter.php")
+  fetch(siteUrl("counter.php"))
     .then(function (response) {
       if (!response.ok) throw new Error("Request failed: " + response.status);
       return response.json();

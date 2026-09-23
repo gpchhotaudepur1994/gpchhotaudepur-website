@@ -92,25 +92,45 @@ real at the domain root.
     filesystem root when a page is opened via `file://`, breaking local
     preview. Document-relative paths work identically under `file://` and
     once deployed at the domain root.
-- **`fetch()` calls inside `js/main.js` for JSON data use root-relative
-  paths** (`/data/notices.json`, `/data/college-info.json`), deliberately
-  different from the rule above:
+- **`fetch()` calls inside `js/main.js` for JSON/PHP data are resolved via
+  `siteUrl()`** (a small runtime helper — see `js/main.js`'s own header
+  comment), not written as document-relative or hardcoded root-relative
+  paths:
   - Fetching local JSON already requires the site to be served over HTTP
     (even a minimal local server, e.g. `python -m http.server`) — it never
     works from a plain double-clicked `file://` page in the first place, in
     any browser, regardless of path style. So there's no `file://`
     compatibility to protect here.
-  - Using one root-relative path in the shared `main.js` means the exact
-    same script works correctly from every page depth without calculating
-    "how many `../` for this page" — that calculation *would* matter for
-    `<link>`/`<script>` tags (hence the rule above), but not for a `fetch()`
-    call gated on domain-root deployment anyway.
+  - A shared script like `main.js` still needs one path that works correctly
+    from every page depth without calculating "how many `../` for this
+    page" — that calculation *does* matter for `<link>`/`<script>` tags
+    (hence the document-relative rule above). A hardcoded **root-relative**
+    path (`/data/...`) used to be how this file solved that, but that only
+    works when the whole site is served from the domain root. It silently
+    breaks under any deployment subpath — e.g. a GitHub Pages *project*
+    site at `https://user.github.io/repo-name/` — because `/data/...`
+    resolves against the domain root, not the repo's own subfolder.
+  - `SITE_BASE_URL` (computed once, near the top of `js/main.js`) fixes this
+    by reading back the browser-resolved absolute URL of `main.js`'s own
+    `<script src="...">` tag (found via `document.getElementsByTagName`,
+    not the timing-sensitive `document.currentScript`) and stripping its
+    `js/main.js` tail. Every page already includes `main.js` via the correct
+    document-relative path for its own depth (`js/main.js`, `../js/main.js`,
+    `../../js/main.js`, ...), so the browser has already done the hard part;
+    reading it back needs no hardcoded domain, repo name, or page-depth
+    logic. `siteUrl("data/college-info.json")` then just appends the
+    site-root-relative path to that computed base — correct under a domain
+    root, a GitHub Pages project subpath, or the eventual
+    `https://gpchhotaudepur.ac.in/` custom domain, with no code branching
+    between them.
 - **Do not mix the two conventions** — asset/link `href`/`src` attributes are
-  always document-relative; JSON `fetch()` URLs are always root-relative.
+  always document-relative; JSON/PHP `fetch()` URLs in `main.js` always go
+  through `siteUrl()`.
 - **Exception:** page-scoped scripts dedicated to exactly one page (or one
   fixed depth), rather than shared across every depth like `main.js`, use a
-  plain document-relative `fetch()` instead — there's no "every depth" case
-  to protect against, so the root-relative rule's reasoning doesn't apply.
+  plain document-relative `fetch()` instead — there's no "every depth, every
+  deployment subpath" case to protect against, so `siteUrl()`'s reasoning
+  doesn't apply.
   `js/faculty-staff.js` (`about/faculty-staff.html`, one level deep) fetches
   `../data/staff.json`; `js/department.js` fetches `../data/departments.json`
   from the one-level-deep landing page (`academics/departments.html`) and
@@ -139,9 +159,10 @@ is the only place PHP is used anywhere on the site:
   automatically (starting at 0) the first time it's called, so nothing needs
   to be pre-seeded at deploy time — the `data/` directory just needs to be
   writable by the web server user.
-- `js/main.js`'s `populateVisitCounter()` calls `fetch("/counter.php")` once
-  per page load — root-relative, for the same reason JSON fetches are (see
-  above): one path works from every page depth. On success it fills in
+- `js/main.js`'s `populateVisitCounter()` calls `fetch(siteUrl("counter.php"))`
+  once per page load — resolved via `siteUrl()` for the same reason JSON
+  fetches are (see "Path & link conventions" above): one path works from
+  every page depth and under any deployment subpath. On success it fills in
   `#visit-count` and reveals the `#visit-counter` line in the footer; on any
   failure (PHP not available, e.g. a local static preview, or the counter
   file couldn't be read/written) it simply leaves that line hidden. A broken
@@ -607,7 +628,7 @@ soon" boxes, no zeroed-out stat counters).
   unless there's a strong, stated reason.
 - Do not add comments explaining *what* code does; only note *why* when a
   decision is non-obvious (e.g. why an asset path is document-relative but a
-  `fetch()` path is root-relative).
+  `fetch()` path in `main.js` is resolved through `siteUrl()`).
 - No emojis in content or code unless explicitly requested.
 - No external libraries, frameworks, CDNs, analytics, or tracking scripts,
   and no backend services — this remains a plain static HTML/CSS/JS site.
