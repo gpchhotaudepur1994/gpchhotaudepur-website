@@ -131,6 +131,27 @@ button { font: inherit; }
    most of the section empty here, so let this one use the section's width. */
 #about-heading + .section-lede { max-width: none; }
 
+/* Long-form body copy on inner pages: plain paragraphs sitting directly in a
+   section were running the full 1180px container width. Cap them at the same
+   70ch measure the page's lists (.mission-list, .outcomes-list, .vm-list)
+   already use, so text and lists share one right edge. Class-less, id-less
+   <p> only — .section-lede, .external-link-action (buttons), JS status lines
+   (#staff-*), etc. keep their own sizing. Left-aligned, not justified:
+   justification opens uneven word gaps at narrow widths and on Gujarati
+   text. */
+main .section-inner > p:not([class]):not([id]),
+main .section-inner > .important-note {
+  max-width: 70ch;
+  text-wrap: pretty;
+}
+/* Gujarati vowel signs sit above and below the baseline; the English 1.6
+   line-height crowds them in multi-line paragraphs. */
+main .section-inner > p:not([class]):not([id]):lang(gu),
+main .section-inner > .important-note:lang(gu),
+.section-lede:lang(gu) {
+  line-height: 1.8;
+}
+
 /* ---------- Utility bar ---------- */
 .utility-bar {
   background: var(--color-primary-dark);
@@ -813,6 +834,7 @@ button { font: inherit; }
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  max-width: 100%;
 }
 .staff-filter-field label {
   font-weight: 600;
@@ -826,7 +848,8 @@ button { font: inherit; }
   border-radius: var(--radius);
   background: var(--color-bg);
   color: var(--color-text);
-  min-width: 240px;
+  min-width: min(240px, 100%);
+  max-width: 100%;
 }
 #staff-status { color: var(--color-text-muted); }
 #staff-count { color: var(--color-text-muted); font-size: 0.9em; margin-bottom: var(--space-5); }
@@ -860,6 +883,10 @@ button { font: inherit; }
   font-weight: 700;
   color: var(--color-primary-dark);
   letter-spacing: 0.02em;
+  /* "ADMINISTRATIVE" is one word wider than a 320px screen at the A+ sizes;
+     break it only when it genuinely can't fit rather than overflow the page. */
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 .staff-department-count {
   font-family: var(--font-body);
@@ -895,45 +922,71 @@ button { font: inherit; }
 .data-table tbody tr:hover { background: var(--color-primary-tint); }
 .data-table tbody tr[hidden] { display: none; }
 
-/* Below ~700px a 3-column table gets cramped even with horizontal scroll —
-   switch each row to a labelled stacked block instead (data-label comes from
-   js/faculty-staff.js). The header row is kept for screen readers via the
-   same visually-hidden technique as .sr-only, rather than display:none. */
+/* Faculty & Staff tables (about/faculty-staff.html, department pages) stay a
+   real table at every width. Real names contain long unbreakable words and
+   designations run to ~45 characters, so three columns can't fit a 320px
+   phone without breaking words mid-name. Instead the table keeps a readable
+   minimum width (in em, so it grows with the A-/A+ text-size control) and
+   .table-responsive scrolls it sideways inside its own box; the page itself
+   never scrolls horizontally. Separate borders (visually identical here,
+   since cells only have bottom borders) keep the sticky Name cell's border
+   moving with it — collapsed borders don't follow position:sticky. */
+.staff-table {
+  min-width: 34em;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.staff-table td { overflow-wrap: break-word; }
+.staff-table th:first-child,
+.staff-table td:first-child { width: 36%; }
+
+/* Below 700px, where the table starts to scroll, the Name column is pinned
+   so every row stays identifiable while the visitor scrolls across to
+   Designation / Qualification. Its width is capped so the scrolling columns
+   keep most of the viewport, and headers may wrap onto two lines. */
 @media (max-width: 699px) {
-  .staff-table { min-width: 0; }
-  .staff-table thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  .staff-table th,
+  .staff-table td { padding: var(--space-3) var(--space-2); }
+  .staff-table thead th { white-space: normal; }
+  .staff-table th:first-child,
+  .staff-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    width: min(9em, 38vw);
+    background: var(--color-bg);
+    box-shadow: inset -1px 0 0 var(--color-border);
   }
-  .staff-table, .staff-table tbody, .staff-table tr, .staff-table td {
-    display: block;
-    width: 100%;
-  }
-  .staff-table tr {
-    padding: var(--space-3) 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-  .staff-table tbody tr:last-child { border-bottom: none; }
-  .staff-table td {
-    display: flex;
-    gap: var(--space-3);
-    justify-content: space-between;
-    padding: var(--space-1) 0;
-    border: none;
-  }
-  .staff-table td::before {
-    content: attr(data-label);
-    flex-shrink: 0;
-    font-weight: 600;
-    color: var(--color-text-muted);
-  }
+  .staff-table thead th:first-child { background: var(--color-bg-alt); }
+  .staff-table tbody tr:hover td:first-child { background: var(--color-primary-tint); }
+}
+
+/* Small reference tables (Courses & Intake, Hostel) — few, short columns, so
+   they fit a 320px screen with no horizontal scroll at all: the descriptive
+   column takes the free width and wraps, the value column shrinks to its
+   content. Capped on desktop so two or three columns don't stretch across
+   the full 1180px container. */
+.table-compact { max-width: 45em; }
+.table-compact .data-table { min-width: 0; }
+.table-compact .data-table th:last-child,
+.table-compact .data-table td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+.intake-table th:first-child,
+.intake-table td:first-child {
+  width: 1%;
+  white-space: nowrap;
+}
+.intake-table th:last-child,
+.intake-table td:last-child { text-align: right; }
+@media (max-width: 699px) {
+  .table-compact .data-table th,
+  .table-compact .data-table td { padding: var(--space-3) var(--space-2); }
+  /* Let "Sr. No." / "Intake" headers wrap so the table still fits 320px at
+     the largest text size; the values themselves stay on one line. */
+  .table-compact .data-table thead th:first-child,
+  .table-compact .data-table thead th:last-child { white-space: normal; }
 }
 
 /* A single supporting photograph inside page body copy — sized down from
