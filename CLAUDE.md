@@ -272,8 +272,8 @@ ABOUT            → About College, Vision & Mission, Principal's Message,
                    Administration, Organization Chart, Committees, Affiliation
 ACADEMICS        → Departments, Courses, Academic Calendar, Examination
 ADMISSIONS       → Admissions, Courses & Intake
-STUDENTS         → Student Corner, Notices, Downloads, Examination (shared
-                   page, see below), Student Activities
+STUDENT CORNER   → Student Corner, Notices, Syllabus, Student Activities,
+                   SSIP – Student Start-up & Innovation
 FACILITIES       → Library, Laboratories & Workshops, Hostel, Sports,
                    Campus Facilities
 TRAINING & PLACEMENT   (single page, no sub-items)
@@ -365,7 +365,12 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │   │                             source via js/main.js fetchNotices(); see
 │   │                             "Notice Board Maintenance" below
 │   ├── downloads.html           Renders links to /downloads
-│   └── student-activities.html  (existence unconfirmed)
+│   ├── student-activities.html  (existence unconfirmed)
+│   └── ssip.html                SSIP – Student Start-up and Innovation Policy — content
+│                                 from SSIP_Website_Writeup.docx only; links out to
+│                                 https://www.ssipgujarat.in/. SSIP coordinator name/contact
+│                                 and any institute SSIP activities are not yet provided —
+│                                 do not invent them.
 │                                 Examination: linked to ../academics/examination.html,
 │                                 not a separate file — see rule below.
 ├── facilities/

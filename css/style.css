@@ -804,6 +804,9 @@ main .section-inner > .important-note:lang(gu),
   padding: var(--space-3) var(--space-4);
 }
 .important-note strong { color: var(--color-primary-dark); }
+/* Lists carry no bottom margin, so a callout that follows one directly
+   (e.g. students/ssip.html) would otherwise touch its last item. */
+.mission-list + .important-note { margin-top: var(--space-4); }
 
 /* ---------- Contact ---------- */
 .contact-grid {
