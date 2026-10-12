@@ -697,7 +697,7 @@ main .section-inner > .important-note:lang(gu),
 .stacked-sections h2 { margin-top: var(--space-7); }
 .stacked-sections h2:first-of-type { margin-top: 0; }
 
-/* Numbered lists (e.g. Program Outcomes) — keep the browser's own numbering,
+/* Numbered lists (e.g. SSIP submission steps) — keep the browser's own numbering,
    just add consistent spacing to match .mission-list's rhythm. */
 .outcomes-list {
   margin: 0;
