@@ -33,12 +33,13 @@ important than visual novelty or technical sophistication.
      later. The site must run as plain static files.
    - Do **not** introduce a database, server-side language (PHP/Node/Python
      backend, etc.), authentication/login system, or CMS (WordPress, etc.)
-     at this stage. **One deliberate, narrow exception:** `counter.php` at
-     the project root, added for the global visit counter — see "Site-wide
-     visit counter" below. It's a single small file with no framework, no
-     database, and no login; everything else on the site stays static.
-     Don't add further server-side code without the same explicit
-     discussion.
+     at this stage. The website itself contains **no** server-side code.
+     The two features that need shared, live data — the Notice Board and
+     the global visit counter — each use a separately deployed Google Apps
+     Script Web App (reference sources in `apps-script/`), called from
+     `js/main.js`; see "Notice Board Maintenance" and "Site-wide visit
+     counter" below. Don't add further server-side code or backend services
+     without the same explicit discussion.
    - Do **not** add a contact form with server-side processing without
      checking with the user first — static hosting has no backend. A
      `mailto:` link or a third-party form service are the only options to
@@ -46,10 +47,9 @@ important than visual novelty or technical sophistication.
 4. **Deployable on conventional/ERNET institutional hosting.** Assume plain
    Apache-style static hosting with no guarantee of Node/PHP/database
    availability, no build pipeline, and possibly restricted or filtered
-   outbound network access. **Exception:** the site-wide visit counter
-   (`counter.php`) does require a host with PHP enabled and a writable
-   `data/` directory — see "Site-wide visit counter" below for exactly what
-   happens if that's not available. Nothing else on the site depends on PHP.
+   outbound network access. Nothing on the site depends on PHP or any other
+   server-side language on the web host — it currently runs on GitHub Pages,
+   which serves static files only.
    - Self-host every asset (CSS, JS, fonts, images). Do not depend on
      external CDNs (Google Fonts, CDN-hosted JS libraries, etc.), analytics,
      or tracking scripts.
@@ -92,7 +92,7 @@ real at the domain root.
     filesystem root when a page is opened via `file://`, breaking local
     preview. Document-relative paths work identically under `file://` and
     once deployed at the domain root.
-- **`fetch()` calls inside `js/main.js` for JSON/PHP data are resolved via
+- **`fetch()` calls inside `js/main.js` for the site's own JSON data are resolved via
   `siteUrl()`** (a small runtime helper — see `js/main.js`'s own header
   comment), not written as document-relative or hardcoded root-relative
   paths:
@@ -124,8 +124,11 @@ real at the domain root.
     `https://gpchhotaudepur.ac.in/` custom domain, with no code branching
     between them.
 - **Do not mix the two conventions** — asset/link `href`/`src` attributes are
-  always document-relative; JSON/PHP `fetch()` URLs in `main.js` always go
-  through `siteUrl()`.
+  always document-relative; the site's own JSON `fetch()` URLs in `main.js`
+  always go through `siteUrl()`. External Apps Script endpoints
+  (`NOTICE_API_URL`, `VISIT_COUNTER_API_URL`) are absolute `https://` URLs
+  and never go through `siteUrl()` — they don't live in this site, so page
+  depth and deployment path don't affect them.
 - **Exception:** page-scoped scripts dedicated to exactly one page (or one
   fixed depth), rather than shared across every depth like `main.js`, use a
   plain document-relative `fetch()` instead — there's no "every depth, every
@@ -142,37 +145,82 @@ real at the domain root.
 ## Site-wide visit counter
 
 There is exactly **one** counter for the whole website — not one per page.
-Every page increments the same shared total on load; the footer on every
-page displays that same number as "Website Visits: 1,234".
+Every page load, on any page, from any visitor, browser or device, adds one
+to the same shared total; every page shows that same number as
+"Website Visits: 1,234" in its bottom-right corner.
 
-**This is the one deliberate exception to the static-only rule above** and
-is the only place PHP is used anywhere on the site:
+**History — why there is no `counter.php`:** the counter was first built as
+a PHP endpoint (`counter.php` writing `data/visit-count.txt`). The site is
+hosted on GitHub Pages, which never executes PHP — it served the PHP source
+as a plain file, the JSON parse failed, and the count never appeared. The
+PHP version was removed (it remains in Git history) and replaced by the
+Apps Script backend below, which works on GitHub Pages, the future
+`gpchhotaudepur.ac.in` custom domain and any ERNET static hosting alike. Do
+not reintroduce a PHP or other host-side counter: two backends would split
+the total.
 
-- `counter.php` (project root) — takes no input from the request at all (no
-  filename, path, or query parameter is ever read), so a client can never
-  influence which file it reads or writes. On each call it opens
-  `data/visit-count.txt` with an exclusive `flock()`, increments the integer
-  it contains, writes it back, and returns `{"count": N}` as JSON. The lock
-  makes concurrent requests safe against corruption.
-- `data/visit-count.txt` is runtime state, not source content — it's listed
-  in `.gitignore` and is not committed. `counter.php` creates it
-  automatically (starting at 0) the first time it's called, so nothing needs
-  to be pre-seeded at deploy time — the `data/` directory just needs to be
-  writable by the web server user.
-- `js/main.js`'s `populateVisitCounter()` calls `fetch(siteUrl("counter.php"))`
-  once per page load — resolved via `siteUrl()` for the same reason JSON
-  fetches are (see "Path & link conventions" above): one path works from
-  every page depth and under any deployment subpath. On success it fills in
-  `#visit-count` and reveals the `#visit-counter` line in the footer; on any
-  failure (PHP not available, e.g. a local static preview, or the counter
-  file couldn't be read/written) it simply leaves that line hidden. A broken
-  or unavailable counter never affects anything else on the page.
+**Architecture:**
 
-**Hosting requirement:** this feature needs PHP enabled on the server and a
-writable `data/` directory. If the chosen ERNET hosting doesn't support PHP,
-`counter.php` simply won't execute (or will 404), the fetch above will fail,
-and every page will silently render with no visit-counter line — the rest of
-the site is completely unaffected either way.
+- **Backend:** a Google Apps Script Web App, source in
+  `apps-script/visit-counter.gs` (reference copy — deployed separately, not
+  run by the website; same pattern as the Notice Board's
+  `apps-script/notice-board.gs`). Each `GET` increments one Script Property
+  (`websiteVisitCount`) under `LockService`'s script lock, so simultaneous
+  visits can't lose increments, and returns `{"count": N}`. On a lock
+  timeout, storage failure, or a non-whole-number stored value it returns
+  `{"error": ...}` and leaves the stored value untouched. It reads no input
+  from the request.
+- **Configuration:** the `VISIT_COUNTER_API_URL` constant near the top of
+  `js/main.js` — the only place the endpoint URL appears. It's an absolute
+  `https://script.google.com/macros/s/.../exec` URL (not `siteUrl()`), so it
+  is identical from every page depth and deployment path. The Web App is
+  deployed and this constant is set to its `/exec` URL. **Setting it to the
+  empty string disables the counter** — no request is made and the line
+  stays hidden.
+- **Frontend:** `populateVisitCounter()` in `js/main.js` runs once per page
+  load (from the shared `DOMContentLoaded` handler — no per-page script),
+  with `cache: "no-store"` so a cached reply can't skip an increment. It
+  shows the count only if the reply is a non-negative whole number; on any
+  failure (URL empty, network error, non-OK status, `{"error": ...}`,
+  non-JSON) the line stays hidden. Nothing is ever stored in, or read from,
+  `localStorage`/`sessionStorage`, and no number is ever hardcoded.
+- **Markup:** every page's footer has the same
+  `<p id="visit-counter" hidden>` line (label `common.websiteVisits`,
+  translated by the normal `data-i18n` system; number in `#visit-count`).
+  A new page must copy this line with the rest of the shared footer.
+- **Styling** (`css/style.css`, "Global visit counter"): at 700px and wider
+  it is a small fixed badge in the viewport's bottom-right corner with
+  `pointer-events: none` (clicks pass through to whatever is under it), and
+  `.footer-bottom` gets extra bottom padding so at the end of a page the
+  badge sits in empty space, not over footer text. Below 700px it is an
+  ordinary right-aligned last line of the footer, so it never covers content
+  on phones. Like the rest of the footer, it is not affected by the A−/A+
+  text-size control. Its CSS sets no `display` value, so `[hidden]` keeps
+  working.
+
+**Deployment (one-time, by someone with the institute's Google account):**
+
+1. https://script.google.com/ → New project (e.g. "GPC Website Visit
+   Counter") — its own project, not the Notice Board's (one `doGet` per
+   project).
+2. Paste in `apps-script/visit-counter.gs`, save.
+3. Deploy → New deployment → Web app; Execute as **Me**; Who has access
+   **Anyone** (not "Anyone with a Google account", or browsers get a login
+   page instead of JSON). Authorise.
+4. Put the `/exec` URL into `VISIT_COUNTER_API_URL` in `js/main.js`, commit,
+   and push to publish.
+5. Verify on the live site: the homepage shows "Website Visits: N", and
+   opening another page shows N+1.
+
+The count starts from 1 on the first visit. To carry over an official,
+verified total from an earlier counter, set the `websiteVisitCount` Script
+Property (Project Settings → Script Properties) to that number before going
+live — never invent a starting value. Re-deploying a *new version* of the
+same deployment keeps the same URL; creating a *new deployment* changes it,
+so step 4 must then be repeated. Google's Apps Script daily quotas
+(including Properties reads/writes) apply to the account that owns the
+script; check Google's current published limits if traffic grows
+substantially.
 
 ## Training & Placement — Google Drive reports
 
@@ -314,9 +362,6 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 ```
 /
 ├── CLAUDE.md
-├── counter.php                 Global site-wide visit counter endpoint — see
-│                                "Site-wide visit counter" above. Only
-│                                server-side file on the site.
 ├── index.html                 Homepage
 ├── gallery.html                Photo gallery
 ├── contact.html                Contact details, location, map
@@ -398,9 +443,12 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 ├── documents/                     Institutional PDFs (prospectus, mandatory disclosure,
 │                                  annual reports, RTI, etc.) — linked from content pages
 ├── apps-script/
-│   └── notice-board.gs             Google Apps Script source (reference copy — deployed
-│                                    separately, not part of the website itself); see
-│                                    "Notice Board Maintenance" below
+│   ├── notice-board.gs             Google Apps Script source (reference copy — deployed
+│   │                                separately, not part of the website itself); see
+│   │                                "Notice Board Maintenance" below
+│   └── visit-counter.gs            Global visit counter Apps Script (reference copy —
+│                                    deployed separately as its own project); see
+│                                    "Site-wide visit counter" above
 ├── notices/                        Notice/circular PDF files — only used if a Google Sheet
 │                                    row's Link column points here, or by the data/notices.json
 │                                    fallback (see "Notice Board Maintenance" below)
@@ -411,10 +459,8 @@ supplied yet — do not invent any of these. See "Open decisions" below.
     │                                "Notice Board Maintenance" below
     ├── staff.json                  Faculty/staff records — consumed by about/faculty-staff.html
     │                               (all departments) and js/department.js (one department at a time)
-    ├── departments.json            The 6 departments: staff.json name, display name, page slug —
-    │                               see "Department pages" below
-    └── visit-count.txt             Runtime counter state written by counter.php — not
-                                     committed (see .gitignore), auto-created on first hit
+    └── departments.json            The 6 departments: staff.json name, display name, page slug —
+                                    see "Department pages" below
 ```
 
 **Examination is one physical page** (`academics/examination.html`) even

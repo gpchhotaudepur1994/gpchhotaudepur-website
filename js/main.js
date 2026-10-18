@@ -4,7 +4,7 @@
 // pages one folder deep), so this file itself must not assume page depth.
 //
 // fetch() calls below resolve against SITE_BASE_URL (see below) rather than a
-// hardcoded root-relative "/..." path: JSON/PHP data can only be fetched when
+// hardcoded root-relative "/..." path: JSON data can only be fetched when
 // the site is served over HTTP (even a simple local server) — never via a
 // plain double-clicked file:// page — so there's no file:// compatibility to
 // preserve here, but a literal leading "/" resolves against the domain root,
@@ -37,6 +37,15 @@ function siteUrl(path) {
 // (see fetchNotices() below) reads from this single constant; it is never
 // hard-coded anywhere else.
 var NOTICE_API_URL = "https://script.google.com/macros/s/AKfycbz3N206RqebNuwImThc6_JL2CLhnY_CwzZmHlFZh5uIQt7Vihtm_U_ucyUQf5UlEQ-G/exec";
+
+// ---------- Visit counter configuration ----------
+// The one place the visit counter's Google Apps Script Web App URL (ends in
+// /exec) is configured — see apps-script/visit-counter.gs and CLAUDE.md
+// "Site-wide visit counter". An absolute URL, not siteUrl(): the counter
+// lives on Google's servers, not in this static site, so it is the same from
+// every page depth, GitHub Pages subpath or custom domain. Setting it to ""
+// disables the counter: no request is made and the footer line stays hidden.
+var VISIT_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbwcCQVMmcbbNun-guvUKQdANGXrhT1HiHx4ywiAMJdesWQkKtoguL08vD2Sgh-cp1Ni/exec";
 
 // Local fallback only — NOT the primary source. Kept so the homepage/Notice
 // Board still degrade gracefully (rather than showing an error) if the Apps
@@ -657,32 +666,34 @@ function setCopyrightYear() {
   if (el) el.textContent = String(new Date().getFullYear());
 }
 
-// ---------- Global site-wide visit counter (counter.php) ----------
-// One counter for the whole site, not one per page: every page load hits the
-// same server-side endpoint, which increments a single shared file and hands
-// back the new total. Resolved via siteUrl() for the same reason as the JSON
-// fetches above — one path works from every page depth and deployment
-// subpath. counter.php requires PHP-enabled hosting (see CLAUDE.md); if it's
-// unavailable the fetch/parse below simply fails and the element stays
-// hidden, so a missing or broken counter never affects the rest of the page.
+// ---------- Global site-wide visit counter (Apps Script) ----------
+// One counter for the whole site, not one per page: every page load makes
+// exactly one request to the same Web App (VISIT_COUNTER_API_URL above),
+// which adds one to the single shared total and hands it back. The browser
+// never stores or computes the count itself. cache: "no-store" so a cached
+// response can't skip an increment. Any failure — URL not configured,
+// network error, an {"error": ...} reply — leaves the line hidden rather
+// than showing a stale or made-up number.
 function populateVisitCounter() {
   var wrapper = document.getElementById("visit-counter");
   var valueEl = document.getElementById("visit-count");
-  if (!wrapper || !valueEl) return;
+  if (!wrapper || !valueEl || !VISIT_COUNTER_API_URL) return;
 
-  fetch(siteUrl("counter.php"))
+  fetch(VISIT_COUNTER_API_URL, { cache: "no-store" })
     .then(function (response) {
       if (!response.ok) throw new Error("Request failed: " + response.status);
       return response.json();
     })
     .then(function (data) {
-      if (typeof data.count !== "number") throw new Error("Unexpected data format");
-      valueEl.textContent = formatWithCommas(data.count);
+      var count = data && data.count;
+      if (typeof count !== "number" || count < 0 || Math.floor(count) !== count) {
+        throw new Error("Unexpected data format");
+      }
+      valueEl.textContent = formatWithCommas(count);
       wrapper.hidden = false;
     })
     .catch(function () {
-      // No PHP hosting available (e.g. local static preview) or the counter
-      // file couldn't be read/written — leave the line hidden.
+      // Counter unavailable — leave the line hidden.
     });
 }
 

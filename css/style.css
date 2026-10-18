@@ -1097,3 +1097,36 @@ main .section-inner > .important-note:lang(gu),
 }
 .footer-bottom p { margin: 0; }
 .footer-bottom p + p { margin-top: var(--space-1); }
+
+/* ---------- Global visit counter (#visit-counter, js/main.js) ----------
+   Same footer markup on every page. Phones: a plain right-aligned last line
+   of the footer, so it never sits over page content. Wider screens: pinned to
+   the viewport's bottom-right corner as a small badge that clicks pass
+   through; the footer gets matching extra bottom padding so, at the end of
+   the page, the badge rests in empty space rather than over the copyright
+   lines. z-index stays below the sticky header (500) so an open menu covers
+   the badge, never the reverse. No display value is set here, so the
+   [hidden] attribute still hides it until a real count has loaded. */
+#visit-counter {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.footer-bottom #visit-counter { margin-top: var(--space-3); }
+@media (min-width: 700px) {
+  .footer-bottom { padding-bottom: calc(var(--space-4) + 2.75rem); }
+  .footer-bottom #visit-counter {
+    position: fixed;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    z-index: 400;
+    margin: 0;
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-primary-dark);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(11, 39, 64, 0.25);
+    font-size: 0.8rem;
+    pointer-events: none;
+  }
+}
