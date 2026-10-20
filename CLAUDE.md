@@ -74,7 +74,7 @@ real at the domain root.
 
 - **Static asset references (CSS, JS, images) and internal page links use
   document-relative paths**, not root-relative (`/…`) paths:
-  - From a root-level page (`index.html`, `gallery.html`, `contact.html`,
+  - From a root-level page (`index.html`, `contact.html`,
     `training-placement.html`): `css/style.css`, `js/main.js`,
     `images/...`, `about/about-college.html`, etc.
   - From a page one folder deep (e.g. `about/vision-mission.html`,
@@ -147,7 +147,7 @@ real at the domain root.
 There is exactly **one** counter for the whole website — not one per page.
 Every page load, on any page, from any visitor, browser or device, adds one
 to the same shared total; every page shows that same number as
-"Website Visits: 1,234" in its bottom-right corner.
+"Website Visits: 1,234" just above the footer disclaimer.
 
 **History — why there is no `counter.php`:** the counter was first built as
 a PHP endpoint (`counter.php` writing `data/visit-count.txt`). The site is
@@ -188,13 +188,10 @@ the total.
   `<p id="visit-counter" hidden>` line (label `common.websiteVisits`,
   translated by the normal `data-i18n` system; number in `#visit-count`).
   A new page must copy this line with the rest of the shared footer.
-- **Styling** (`css/style.css`, "Global visit counter"): at 700px and wider
-  it is a small fixed badge in the viewport's bottom-right corner with
-  `pointer-events: none` (clicks pass through to whatever is under it), and
-  `.footer-bottom` gets extra bottom padding so at the end of a page the
-  badge sits in empty space, not over footer text. Below 700px it is an
-  ordinary right-aligned last line of the footer, so it never covers content
-  on phones. Like the rest of the footer, it is not affected by the A−/A+
+- **Styling** (`css/style.css`, "Global visit counter"): an ordinary centred line in normal
+  document flow — the first line of `.footer-bottom`, directly above the disclaimer
+  — on every page and viewport width. Nothing is fixed or floating, so it never
+  covers content. Like the rest of the footer, it is not affected by the A−/A+
   text-size control. Its CSS sets no `display` value, so `[hidden]` keeps
   working.
 
@@ -326,12 +323,11 @@ FACILITIES       → Library, Laboratories & Workshops, Hostel, Sports,
                    Campus Facilities
 TRAINING & PLACEMENT   (single page, no sub-items)
 RTI              (single page, no sub-items)
-GALLERY
 CONTACT
 ```
 
 **RTI is a deliberate exception to the rule below** — the user explicitly
-asked for it in the primary nav (between Training & Placement and Gallery),
+asked for it in the primary nav (between Training & Placement and Contact),
 so it does not follow the "compliance links stay out of primary nav" default
 that still applies to the others.
 
@@ -363,7 +359,6 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 /
 ├── CLAUDE.md
 ├── index.html                 Homepage
-├── gallery.html                Photo gallery
 ├── contact.html                Contact details, location, map
 ├── training-placement.html     Training & Placement — About TPO Cell (official copy),
 │                                Placement Reports (links out to the TPO Google Drive
@@ -371,7 +366,7 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │                                reports" below), and a photo gallery (4 photos, see
 │                                images/training-placement/)
 ├── rti.html                    Right to Information (RTI) — primary nav item between
-│                                Training & Placement and Gallery; content is still
+│                                Training & Placement and Contact; content is still
 │                                placeholder (see "Open decisions" below), not yet
 │                                confirmed content or a Google Drive link
 ├── about/
@@ -436,7 +431,6 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 ├── images/
 │   ├── logo/                    Official college logo/emblem
 │   ├── banners/                  Homepage/section banner images
-│   ├── gallery/                  Photo gallery images
 │   ├── departments/               Department-specific images
 │   └── training-placement/        TPO Cell gallery photographs — TPO_Picture1-4.jpg,
 │                                   see "Training & Placement — Google Drive reports"
@@ -665,9 +659,8 @@ soon" boxes, no zeroed-out stat counters).
    are supplied
 10. Facilities (only facilities confirmed to exist)
 11. Latest News / Events — **omit entirely** if there is no real content
-12. Gallery preview (links to `gallery.html`)
-13. Contact / map
-14. Footer (Quick Links, compliance links, social links if applicable,
+12. Contact / map
+13. Footer (Quick Links, compliance links, social links if applicable,
     copyright)
 
 ## Working conventions
