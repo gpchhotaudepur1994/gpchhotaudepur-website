@@ -317,10 +317,9 @@ ABOUT            → About College, Vision & Mission, Principal's Message,
                    Administration, Organization Chart, Committees, Affiliation
 ACADEMICS        → Departments, Courses, Academic Calendar, Examination
 ADMISSIONS       → Admissions, Courses & Intake
-STUDENT CORNER   → Student Corner, Notices, Syllabus, Student Activities,
+STUDENT CORNER   → Student Corner, Notices, Syllabus,
                    SSIP – Student Start-up & Innovation
-FACILITIES       → Library, Laboratories & Workshops, Hostel, Sports,
-                   Campus Facilities
+FACILITIES       → Library, Laboratories & Workshops, Hostel
 TRAINING & PLACEMENT   (single page, no sub-items)
 RTI              (single page, no sub-items)
 CONTACT
@@ -337,10 +336,9 @@ Grievance, Anti-Ragging, relevant government/education body links) are
 homepage and a matching Quick Links column in the footer, and only appear
 once the user confirms the item is real and supplies the link/document.
 
-**Existence not yet confirmed** for: Committees, Hostel, Sports, Student
-Activities. Their pages exist as structural placeholders only — see
-"Placeholder convention" above and do not treat their presence in the
-sitemap as confirmation that the facility/committee exists.
+**Existence not yet confirmed** for: Committees, Hostel. Their pages exist
+as structural placeholders only — see "Placeholder convention" above and do
+not treat their presence in the sitemap as confirmation that the facility/committee exists.
 
 **Training & Placement is confirmed** — official "About Training &
 Placement Cell" copy, the TPO Google Drive reports link, and the four
@@ -405,7 +403,6 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │   │                             source via js/main.js fetchNotices(); see
 │   │                             "Notice Board Maintenance" below
 │   ├── downloads.html           Renders links to /downloads
-│   ├── student-activities.html  (existence unconfirmed)
 │   └── ssip.html                SSIP – Student Start-up and Innovation Policy — content
 │                                 from SSIP_Website_Writeup.docx only; links out to
 │                                 https://www.ssipgujarat.in/. SSIP coordinator name/contact
@@ -416,9 +413,7 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 ├── facilities/
 │   ├── library.html
 │   ├── laboratories-workshops.html
-│   ├── hostel.html              (existence unconfirmed)
-│   ├── sports.html              (existence unconfirmed)
-│   └── campus-facilities.html
+│   └── hostel.html              (existence unconfirmed)
 ├── css/
 │   └── style.css                Single stylesheet (may be split later if it grows large)
 ├── js/
@@ -620,9 +615,8 @@ Not yet provided by the user — do not guess these:
 - List of departments/branches offered and intake capacity
 - Admission process details and important dates
 - Whether the following actually exist at all, and if so their details:
-  Hostel, any Committees (Anti-Ragging, ICC/Women's Cell, SC/ST Cell, etc.),
-  Sports facilities, Student Activities/clubs/NCC/NSS
-- Facilities that do exist (library, labs/workshops, campus facilities)
+  Hostel, any Committees (Anti-Ragging, ICC/Women's Cell, SC/ST Cell, etc.)
+- Facilities that do exist (library, labs/workshops)
 - Official logo/emblem artwork
 - Any existing brand colours, if the institute already has a visual identity
 - Whether the site needs Gujarati/Hindi language support alongside English
