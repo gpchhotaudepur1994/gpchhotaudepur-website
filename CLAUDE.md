@@ -673,6 +673,8 @@ soon" boxes, no zeroed-out stat counters).
 - Every new page should reuse the same header/nav/footer structure and the
   shared `css/style.css` — no per-page inline styles or one-off scripts
   unless there's a strong, stated reason.
+- Maintenance note: Keep shared navigation, footer elements, translations,
+  and accessibility behaviour consistent across all pages.
 - Do not add comments explaining *what* code does; only note *why* when a
   decision is non-obvious (e.g. why an asset path is document-relative but a
   `fetch()` path in `main.js` is resolved through `siteUrl()`).
