@@ -84,8 +84,8 @@ real at the domain root.
     currently the only such pages on the site): `../../css/style.css`,
     `../../js/main.js`, `../../images/...`, `../../about/about-college.html`,
     etc. — **except** for its three siblings still inside `academics/`
-    (`departments.html`, `courses.html`, `academic-calendar.html`,
-    `examination.html`), which only need one `../` since they live one
+    (`departments.html`, `courses.html`, `academic-calendar.html`),
+    which only need one `../` since they live one
     level up, not two (e.g. `../departments.html`, not
     `../../academics/departments.html`).
   - Reason: a root-relative path like `/css/style.css` resolves to the
@@ -315,11 +315,11 @@ without going back to the user.
 HOME
 ABOUT            → About College, Vision & Mission, Principal's Message,
                    Administration, Organization Chart, Committees, Affiliation
-ACADEMICS        → Departments, Courses, Academic Calendar, Examination
+ACADEMICS        → Departments, Courses, Academic Calendar
 ADMISSIONS       → Admissions, Courses & Intake
 STUDENT CORNER   → Student Corner, Notices, Syllabus,
                    SSIP – Student Start-up & Innovation
-FACILITIES       → Library, Laboratories & Workshops, Hostel
+FACILITIES       → Library, Hostel
 TRAINING & PLACEMENT   (single page, no sub-items)
 RTI              (single page, no sub-items)
 CONTACT
@@ -386,8 +386,7 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │   │   ├── mechanical-engineering.html
 │   │   └── science-and-humanity.html
 │   ├── courses.html
-│   ├── academic-calendar.html
-│   └── examination.html        Shared page — also linked from Students nav
+│   └── academic-calendar.html
 ├── admissions/
 │   ├── index.html               Admissions landing page — ACPDC admission process
 │   │                            info and official link. admission-process.html was
@@ -402,17 +401,18 @@ supplied yet — do not invent any of these. See "Open decisions" below.
 │   ├── notices.html             Notice Board — renders the Google Sheet notice
 │   │                             source via js/main.js fetchNotices(); see
 │   │                             "Notice Board Maintenance" below
-│   ├── downloads.html           Renders links to /downloads
+│   ├── downloads.html           Downloads for Faculty (Google Drive link). Its page-level
+│   │                             "Downloads" h1 and placeholder intro were removed at the
+│   │                             user's request, so the page's first heading is that
+│   │                             section's h2 (the section's aria-labelledby points at it).
 │   └── ssip.html                SSIP – Student Start-up and Innovation Policy — content
 │                                 from SSIP_Website_Writeup.docx only; links out to
-│                                 https://www.ssipgujarat.in/. SSIP coordinator name/contact
-│                                 and any institute SSIP activities are not yet provided —
-│                                 do not invent them.
-│                                 Examination: linked to ../academics/examination.html,
-│                                 not a separate file — see rule below.
+│                                 https://www.ssipgujarat.in/. The coordinator-details TODO
+│                                 was removed at the user's request; no SSIP coordinator
+│                                 name/contact or institute SSIP activities have been
+│                                 provided — do not invent them.
 ├── facilities/
 │   ├── library.html
-│   ├── laboratories-workshops.html
 │   └── hostel.html              (existence unconfirmed)
 ├── css/
 │   └── style.css                Single stylesheet (may be split later if it grows large)
@@ -452,11 +452,12 @@ supplied yet — do not invent any of these. See "Open decisions" below.
                                     see "Department pages" below
 ```
 
-**Examination is one physical page** (`academics/examination.html`) even
-though it's reachable from both the Academics and Students menus — the
-Students-menu entry is just a link to that same file
-(`../academics/examination.html` from within `students/`), never a
-duplicate page. Keep it this way so there is only ever one copy to maintain.
+**Removed pages:** `academics/examination.html` and
+`facilities/laboratories-workshops.html` were placeholder-only pages and
+were deleted at the user's request, along with their menu entries and their
+`nav.examination` / `nav.laboratoriesWorkshops` Gujarati strings. Don't
+re-add either page or menu item without the user asking. Department-specific
+laboratory lists stay on the individual department pages.
 
 ## Department pages
 
@@ -491,6 +492,14 @@ Vision"):
 - Program Specific Outcomes (PSOs)
 - Faculty & Staff
 - Laboratories / Facilities
+
+Two deliberate exceptions, both at the user's request: **Civil
+Engineering** has only About the Department, Program Outcomes and Faculty &
+Staff — its Vision, Mission, PSOs and Laboratories / Facilities sections
+were placeholder-only and were removed (re-add each heading only when the
+official text for it is supplied). **Science and Humanity** intentionally
+has no Department Vision, Department Mission or PSOs sections — don't add
+them.
 
 A standalone "Courses" section/heading was removed from every department
 page at the user's request — course information for a department lives only
