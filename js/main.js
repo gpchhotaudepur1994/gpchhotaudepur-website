@@ -512,6 +512,18 @@ function formatNoticeDate(dateStr) {
   return day + " " + NOTICE_MONTH_NAMES[parsed.getMonth()] + " " + parsed.getFullYear();
 }
 
+// The Link column comes from a Google Sheet, so a javascript:/data: value must
+// never reach an href. Relative paths resolve against the page and pass.
+function safeNoticeUrl(raw) {
+  if (!raw) return "";
+  try {
+    var u = new URL(String(raw).trim(), document.baseURI);
+    return (u.protocol === "https:" || u.protocol === "http:" || u.protocol === "file:") ? u.href : "";
+  } catch (e) {
+    return "";
+  }
+}
+
 // Shared <li> template for both the homepage box and the full Notice Board.
 // linkLabel lets the compact homepage box use a shorter "View →" without
 // affecting the full Notice Board's "View Notice →" (default).
@@ -536,12 +548,13 @@ function buildNoticeItemElement(notice, linkLabel) {
     li.appendChild(descEl);
   }
 
-  if (notice.link) {
+  var safeLink = safeNoticeUrl(notice.link);
+  if (safeLink) {
     var linkEl = document.createElement("a");
     linkEl.className = "notice-item-link";
-    linkEl.href = notice.link;
+    linkEl.href = safeLink;
     linkEl.textContent = linkLabel || "View Notice →";
-    if (/^https?:\/\//i.test(notice.link)) {
+    if (/^https?:\/\//i.test(safeLink)) {
       linkEl.target = "_blank";
       linkEl.rel = "noopener noreferrer";
     }

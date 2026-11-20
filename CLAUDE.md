@@ -219,6 +219,28 @@ so step 4 must then be repeated. Google's Apps Script daily quotas
 script; check Google's current published limits if traffic grows
 substantially.
 
+## Content Security Policy & notice link safety
+
+Every page carries the same `<meta http-equiv="Content-Security-Policy">` tag,
+directly after `<meta charset>`. GitHub Pages cannot set response headers, so a
+meta tag is the only option; it cannot enforce `frame-ancestors`.
+
+- **A new page must copy that tag** with the rest of the shared `<head>`.
+- The policy is `default-src 'self'`, plus `script.google.com` and
+  `script.googleusercontent.com` in `connect-src` (the Apps Script endpoints
+  and their redirect target) and `https://www.google.com` in `frame-src` (the
+  contact-page map). Scripts and styles are `'self'` only, so **no inline
+  `<script>`, `<style>`, `style="..."` attributes or `on*=` handlers** — put
+  them in `js/` or `css/style.css`. `element.style.setProperty()` from JS is
+  fine.
+- Adding any new external host (iframe, image, fetch endpoint) means adding it
+  to the policy in **every** HTML file, and only after the user confirms it is
+  needed (see the no-external-dependencies rule above).
+- Notice `Link` values come from a Google Sheet and are untrusted:
+  `safeNoticeUrl()` in `js/main.js` allows only `http:`, `https:` and `file:`
+  (resolved against the page) before a value reaches an `href`. Keep notice
+  text rendered with `textContent`, never `innerHTML`.
+
 ## Training & Placement — Google Drive reports
 
 `training-placement.html` intentionally does **not** list individual
